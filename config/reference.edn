@@ -1,0 +1,8 @@
+{:cas {:url "https://itest-virkailija.oph.ware.fi"}
+ :ryhmasahkoposti {:params ["https://itest-virkailija.oph.ware.fi/ryhmasahkoposti-service" "hakuperusteet" "ophtest12#"]
+                   :url "https://itest-virkailija.oph.ware.fi/ryhmasahkoposti-service/email"}
+ :message { :email {:from "no-reply@opintopolku.fi"
+            :subject "Example"
+            :body "Example"
+            :isHtml true}
+            :recipient [{:email "example@example.com"}] }}
