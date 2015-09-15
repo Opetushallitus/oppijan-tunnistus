@@ -1,4 +1,4 @@
-(defproject oppijan-tunnistus/root "0.1.0-SNAPSHOT"
+(defproject oppijan-tunnistus "0.1.0-SNAPSHOT"
   :description "Oppijan tunnistus"
   :url "https://github.com/Opetushallitus/email-verification-link"
   :license {:name "EUPL licence"
@@ -84,6 +84,8 @@
             [lein-auto "0.1.2"]
             [lein-ancient "0.6.7"]
             [lein-ring "0.8.11"]]
+
+  :uberjar-exclusions [#".*"]
 
   :aliases {"dbmigrate" ["run" "-m" "fi.vm.sade.oppijantunnistus.db/migrate"]}
 

@@ -1,5 +1,9 @@
 # oppijan-tunnistus
 
+## Creating executable JAR
+
+./lein uberjar
+
 ## Local Postgres setup
 
 MacOS users install docker with command `brew cask install dockertoolbox`.
