@@ -20,7 +20,9 @@
                  [ring/ring-jetty-adapter "1.4.0"]
                  [ring/ring-servlet "1.4.0"]
                  [ring/ring-devel "1.4.0"]
+                 [ring/ring-json "0.4.0"]
                  [ring/ring-core "1.4.0"]
+                 [hiccup "1.0.5"]
 
                  ;; Routing
                  [compojure "1.4.0" :exclusions [instaparse]]
@@ -80,7 +82,8 @@
             [lein-environ "1.0.0"]
             [lein-shell "0.4.0"]
             [lein-auto "0.1.2"]
-            [lein-ancient "0.6.7"]]
+            [lein-ancient "0.6.7"]
+            [lein-ring "0.8.11"]]
 
   :aliases {"dbmigrate" ["run" "-m" "fi.vm.sade.oppijantunnistus.db/migrate"]}
 

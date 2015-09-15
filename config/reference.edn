@@ -11,4 +11,5 @@
       :databasename "oppijantunnistusdb"
       :username "postgres"
       :password "postgres"
-      :port 5432}}
+      :port 5432}
+ :server {:port 8080}}
