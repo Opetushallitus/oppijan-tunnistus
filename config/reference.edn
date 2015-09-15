@@ -5,4 +5,10 @@
             :subject "Example"
             :body "Example"
             :isHtml true}
-            :recipient [{:email "example@example.com"}] }}
+            :recipient [{:email "example@example.com"}] }
+ :db {:schema "public"
+      :servername "oppijantunnistusdb"
+      :databasename "oppijantunnistusdb"
+      :username "postgres"
+      :password "postgres"
+      :port 5432}}

@@ -1,6 +1,5 @@
 (ns fi.vm.sade.oppijantunnistus.server
-  (:use   [clojure.edn]
-          [environ.core :refer [env]])
+  (:use   [fi.vm.sade.oppijantunnistus.config :refer [config]])
   (:require [ring.middleware.logger :as logger]
             [ring.middleware.reload :as reload]
             [clj-util.cas :as cas]
@@ -9,9 +8,7 @@
             [compojure.handler :refer [site]]
             [clojure.tools.logging :as log]))
 
-(defonce config (-> (or (env :config) "config/reference.edn")
-                    (slurp)
-                    (clojure.edn/read-string)))
+
 
 (cas/set-cas (-> config :cas :url))
 

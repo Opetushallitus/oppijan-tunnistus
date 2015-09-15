@@ -6,7 +6,7 @@
   ;:repositories {"Laughing Panda" "http://maven.laughingpanda.org/maven2"}
   :repositories [["oph-releases" "https://artifactory.oph.ware.fi/artifactory/oph-sade-release-local"]
                  ["oph-snapshots" "https://artifactory.oph.ware.fi/artifactory/oph-sade-snapshot-local"]]
-  :dependencies [[org.clojure/clojure "1.6.0"]
+  :dependencies [[org.clojure/clojure "1.7.0"]
                  [org.clojure/data.json "0.2.6"]
                  ; CAS
                  [fi.vm.sade/scala-utils_2.11 "0.2.0-SNAPSHOT"]
@@ -37,9 +37,9 @@
 
                  ;; SQL + migrations
                  [yesql "0.5.0"]
-                 [org.postgresql/postgresql "9.4-1201-jdbc41"]
-                 ;[hikari-cp "1.3.0" :exclusions [prismatic/schema]]
-                 ;[org.flywaydb/flyway-core "3.2.1"]
+                 [org.postgresql/postgresql "9.4-1202-jdbc42"]
+                 [hikari-cp "1.3.1" :exclusions [prismatic/schema]]
+                 [org.flywaydb/flyway-core "3.2.1"]
 
                  ;; E-mail
                  [org.apache.commons/commons-email "1.4"]
@@ -81,5 +81,7 @@
             [lein-shell "0.4.0"]
             [lein-auto "0.1.2"]
             [lein-ancient "0.6.7"]]
+
+  :aliases {"dbmigrate" ["run" "-m" "fi.vm.sade.oppijantunnistus.db/migrate"]}
 
 )
