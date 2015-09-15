@@ -1,0 +1,1 @@
+select * from secure_link where token = :token
