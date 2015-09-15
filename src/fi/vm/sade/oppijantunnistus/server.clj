@@ -13,12 +13,12 @@
 (cas/set-cas (-> config :cas :url))
 
 (defroutes oppijan-tunnistus-routes
-           (GET "/verifioi/:tunniste" [tunniste]
-             (let [entry (securelink/get tunniste)]
+           (GET "/verify/:token" [token]
+             (let [entry (securelink/get token)]
                (if entry
                  (response {:email (entry :email) :voimassa true})
                  (response {:voimassa false}))))
-           (POST "/verifioi" {params :params}
+           (POST "/verify" {params :params}
              (let [email (params :email)
                    callback_url (params :url)
                    token (securelink/generate-token)]
