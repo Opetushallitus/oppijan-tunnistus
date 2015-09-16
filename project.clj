@@ -3,7 +3,8 @@
   :url "https://github.com/Opetushallitus/email-verification-link"
   :license {:name "EUPL licence"
             :url "http://opensource.org/licenses/EUPL-1.1"}
-  ;:repositories {"Laughing Panda" "http://maven.laughingpanda.org/maven2"}
+  :deploy-repositories {"snapshots" {:url "https://artifactory.oph.ware.fi/artifactory/oph-sade-snapshot-local"}
+                        "releases" {:url "https://artifactory.oph.ware.fi/artifactory/oph-sade-release-local"}}
   :repositories [["oph-releases" "https://artifactory.oph.ware.fi/artifactory/oph-sade-release-local"]
                  ["oph-snapshots" "https://artifactory.oph.ware.fi/artifactory/oph-sade-snapshot-local"]]
   :dependencies [[org.clojure/clojure "1.7.0"]
