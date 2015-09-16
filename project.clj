@@ -82,7 +82,7 @@
             [lein-ancient "0.6.7"]
             [lein-ring "0.8.11"]]
 
-  :uberjar-exclusions [#".*"]
+  ;:uberjar-exclusions [#".*"]
 
   :aliases {"dbmigrate" ["run" "-m" "fi.vm.sade.oppijantunnistus.db/migrate"]}
 

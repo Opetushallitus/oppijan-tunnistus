@@ -1,4 +1,4 @@
-(ns fi.vm.sade.oppijantunnistus.db.token
+(ns fi.vm.sade.oppijantunnistus.token
   (:require [pandect.algo.sha256 :refer :all])
   (:import [java.security SecureRandom]))
 

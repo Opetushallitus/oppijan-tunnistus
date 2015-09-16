@@ -1,7 +1,7 @@
 (ns fi.vm.sade.oppijantunnistus.oppijan-tunnistus
   (:require [fi.vm.sade.oppijantunnistus.db.query :refer :all]
             [fi.vm.sade.oppijantunnistus.db.db-util :as db]
-            [fi.vm.sade.oppijantunnistus.db.token :refer [generate-token]]
+            [fi.vm.sade.oppijantunnistus.token :refer [generate-token]]
             [clostache.parser :refer [render]]
             [clojure.java.io :as io]
             [clj-util.cas :refer [set-cas cas-params post]]
@@ -19,7 +19,7 @@
 (defn ^{:private true} get [token]
   (->> (db/exec get-secure-link {:token token}) first))
 
-(defonce ^{:private true} email-template (slurp (io/file (io/resource "email/email.mustache" ))))
+(defonce ^{:private true} email-template (slurp (io/resource "email/email.mustache" )))
 
 (defn retrieve-email-and-validity-with-token [token]
   (let [entry (get token)]
