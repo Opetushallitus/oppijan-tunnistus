@@ -13,4 +13,4 @@
       :password "postgres"
       :port 5432}
  :server {:port 8080
-          :base-url "/oppijan-tunnistus/api/v1"}}
+          :base-url "/oppijan-tunnistus"}}

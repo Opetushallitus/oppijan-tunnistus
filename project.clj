@@ -26,22 +26,17 @@
                  [hiccup "1.0.5"]
 
                  ;; Routing
-                 [compojure "1.4.0" :exclusions [instaparse]]
-                 [metosin/compojure-api "0.23.0" :exclusions [commons-codec
-                                                              instaparse
-                                                              joda-time
-                                                              clj-time
-                                                              org.clojure/tools.reader
-                                                              prismatic/schema]]
+                 [compojure "1.4.0"]
+                 [metosin/compojure-api "0.23.1"]
 
                  ;; JSON
                  [cheshire "5.5.0"]
-                 [prismatic/schema "0.4.4"]
+                 ;[prismatic/schema "0.4.4"]
 
                  ;; SQL + migrations
                  [yesql "0.5.0"]
                  [org.postgresql/postgresql "9.4-1202-jdbc42"]
-                 [hikari-cp "1.3.1" :exclusions [prismatic/schema]]
+                 ;[hikari-cp "1.3.1" :exclusions [prismatic/schema]]
                  [org.flywaydb/flyway-core "3.2.1"]
 
                  ;; E-mail
