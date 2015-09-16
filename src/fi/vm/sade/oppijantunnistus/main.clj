@@ -12,6 +12,6 @@
   (log/info "Using configuration: " config)
   (log/info "Running db migrations")
   (db/migrate "db.migration")
-  ;(log/info (securelink/listaa))
   (log/info "Starting server")
-  (run-jetty app {:port (-> config :server :port)}))
+  (run-jetty app {:port (-> config :server :port)
+                  :context "/api/v1"}))

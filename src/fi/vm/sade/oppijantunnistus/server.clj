@@ -13,16 +13,15 @@
 (cas/set-cas (-> config :cas :url))
 
 (defroutes oppijan-tunnistus-routes
-           (GET "/verify/:token" [token]
+           (GET  (str (-> config :server :base-url) "/verify/:token") [token]
              (let [entry (securelink/get token)]
                (if entry
                  (response {:email (entry :email) :voimassa true})
                  (response {:voimassa false}))))
-           (POST "/verify" {params :params}
+           (POST (str (-> config :server :base-url) "/verify") {params :params}
              (let [email (params :email)
                    callback_url (params :url)
                    token (securelink/generate-token)]
-               (println "TOKEN!" token)
                (securelink/add "1967-07-31 06:30:00 America/Caracas" email token callback_url)
                @(cas/post (apply cas/cas-params (-> config :ryhmasahkoposti :params))
                         (-> config :ryhmasahkoposti :url)
@@ -33,6 +32,6 @@
 
 (def app
   (-> (handler/site oppijan-tunnistus-routes)
-      (wrap-base-url)
       (wrap-json-response)
-      (wrap-json-params)))
+      (wrap-json-params)
+      (wrap-base-url)))
