@@ -31,7 +31,7 @@
 
 (defn send-verification-link [email callback_url]
   (let [token (generate-token)
-        template (render email-template {:verification-link (str callback_url "#" token)})]
+        template (render email-template {:verification-link (str callback_url token)})]
     (if (add "1967-07-31 06:30:00 America/Caracas" email token callback_url)
       @(post (apply cas-params (-> config :ryhmasahkoposti :params))
                  (-> config :ryhmasahkoposti :url)
