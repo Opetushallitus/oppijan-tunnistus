@@ -44,9 +44,7 @@
                  [org.flywaydb/flyway-core "3.2.1"]
 
                  ;; E-mail
-                 [org.apache.commons/commons-email "1.4"]
                  [de.ubercode.clostache/clostache "1.4.0"]
-                 [org.clojure/core.async "0.1.346.0-17112a-alpha"]
 
                  ;; Testing
                  [speclj "3.3.1"]
@@ -62,7 +60,6 @@
                  [org.clojure/tools.logging "0.3.1"]
                  [ring.middleware.logger "0.5.0"]
                  [ring.middleware.conditional "0.2.0"]
-                 ;[fi.reaktor.log4j/log4j-email-throttle "1.0.0"]
 
                  ;; Utils
                  [org.clojure/tools.trace "0.7.8"]

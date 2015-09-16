@@ -1,4 +1,4 @@
-(ns fi.vm.sade.oppijantunnistus.db
+(ns fi.vm.sade.oppijantunnistus.db.db-util
   (:gen-class)
   (:use [clojure.tools.trace :only [trace]]
         [fi.vm.sade.oppijantunnistus.config :refer [config]]

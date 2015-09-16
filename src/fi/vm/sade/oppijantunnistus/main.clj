@@ -2,10 +2,8 @@
   (:use [fi.vm.sade.oppijantunnistus.server :only [app]]
         [ring.adapter.jetty :only [run-jetty]]
         [fi.vm.sade.oppijantunnistus.config :refer [config]])
-  (:require [ring.middleware.reload :as reload]
-            [ring.middleware.logger :as logger]
-            [clojure.tools.logging :as log]
-            [fi.vm.sade.oppijantunnistus.db :as db])
+  (:require [clojure.tools.logging :as log]
+            [fi.vm.sade.oppijantunnistus.db.db-util :as db])
   (:gen-class))
 
 (defn -main [& args]
