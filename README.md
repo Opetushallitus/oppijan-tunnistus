@@ -1,5 +1,11 @@
 # oppijan-tunnistus
 
+## Run locally
+
+./lein run
+
+Open url http://localhost:8080/oppijan-tunnistus/swagger
+
 ## Creating executable JAR
 
 ./lein uberjar
