@@ -15,12 +15,12 @@
 
 (defroutes* oppijan-tunnistus-routes
             "Oppijan tunnistus API"
-           (GET* "/verify/:token" [token]
+           (GET* "/token/:token" [token]
                  :responses {200 {:schema ValidityResponse
                                   :description "Returns token validity and email in case token exists"}}
                  :summary   "Verify token"
                  (response (retrieve-email-and-validity-with-token token)))
-           (POST* "/verify" []
+           (POST* "/token" []
                   :responses  {200 {:description "Verification email sent"}}
                   :body       [sndReq SendRequest]
                   :summary    "Send verification email"
