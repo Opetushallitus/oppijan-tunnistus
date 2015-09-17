@@ -10,6 +10,10 @@ Open url http://localhost:8080/oppijan-tunnistus/swagger
 
 ./lein uberjar
 
+## Run tests
+
+./lein spec
+
 ## Local Postgres setup
 
 MacOS users install docker with command `brew cask install dockertoolbox`.
