@@ -1,0 +1,11 @@
+{:cas {:url "https://{{host_oppija}}"}
+ :ryhmasahkoposti {:params ["https://{{host_oppija}}/ryhmasahkoposti-service" "{{oppijantunnistus_cas_user}}" "{{oppijantunnistus_cas_user}}"]
+                   :url "https://{{host_oppija}}/ryhmasahkoposti-service/email"}
+ :db {:schema "public"
+      :servername "{{oppijantunnistus_db_host}}"
+      :databasename "{{oppijantunnistus_db_name}}"
+      :username "{{oppijantunnistus_db_username}}"
+      :password "{{oppijantunnistus_db_password}}"
+      :port {{oppijantunnistus_db_port}}}
+ :server {:port {{palvelu_portti}}
+          :base-url "/oppijan-tunnistus"}}
