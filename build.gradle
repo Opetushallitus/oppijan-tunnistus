@@ -31,7 +31,7 @@ task(zipIt, type: Zip) {
     include("*.sh")
 
     from '.'
-    from 'target'
+    from 'target/uberjar'
 }
 
 // Task for copying the .zip file to
