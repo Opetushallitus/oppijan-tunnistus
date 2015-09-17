@@ -33,9 +33,11 @@
 
 (defn send-verification-link [email callback_url]
   (let [token (generate-token)
-        template (render email-template {:verification-link (str callback_url token)})]
+        verification_link (str callback_url token)
+        template (render email-template {:verification-link verification_link})]
     (if (add-token (create-expiration-timestamp) email token callback_url)
-      @(post (apply cas-params (-> config :ryhmasahkoposti :params))
+      (do
+        @(post (apply cas-params (-> config :ryhmasahkoposti :params))
                  (-> config :ryhmasahkoposti :url)
                  (write-str {:email {:from "no-reply@opintopolku.fi"
                                         :subject "Verification link"
@@ -43,5 +45,6 @@
                                         :isHtml true}
                                   :recipient [{:email email}] })
                  :content-type ["application" "json"])
+        verification_link)
       (log/error "Saving token to database failed!"))
     ))

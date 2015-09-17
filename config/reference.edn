@@ -1,5 +1,5 @@
 {:cas {:url "https://itest-virkailija.oph.ware.fi"}
- :ryhmasahkoposti {:params ["https://itest-virkailija.oph.ware.fi/ryhmasahkoposti-service" "hakuperusteet" "ophtest12#"]
+ :ryhmasahkoposti {:params ["https://itest-virkailija.oph.ware.fi/ryhmasahkoposti-service" "oppijantunnistus" "ophtest12#"]
                    :url "https://itest-virkailija.oph.ware.fi/ryhmasahkoposti-service/email"}
  :message { :email {:from "no-reply@opintopolku.fi"
             :subject "Example"

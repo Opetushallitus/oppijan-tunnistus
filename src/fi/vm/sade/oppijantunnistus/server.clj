@@ -24,8 +24,7 @@
                   :responses  {200 {:description "Verification email sent"}}
                   :body       [sndReq SendRequest]
                   :summary    "Send verification email"
-                  (send-verification-link (sndReq :email) (sndReq :url))
-                  (ok))
+                  (ok (send-verification-link (sndReq :email) (sndReq :url))))
            (route/not-found "Page not found"))
 
 (defroutes* doc-routes
