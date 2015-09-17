@@ -21,7 +21,9 @@
                  :summary   "Verify token"
                  (response (retrieve-email-and-validity-with-token token)))
            (POST* "/token" []
-                  :responses  {200 {:description "Verification email sent"}}
+                  :responses  {200 {:schema s/Str
+                                    :description "Verification email sent.
+                                    Returns verification-url that is same as callback-url+token."}}
                   :body       [sndReq SendRequest]
                   :summary    "Send verification email"
                   (ok (send-verification-link (sndReq :email) (sndReq :url))))
