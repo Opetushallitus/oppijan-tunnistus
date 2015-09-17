@@ -12,7 +12,7 @@
           [javax.sql.DataSource]
           [org.postgresql.ds PGPoolingDataSource]))
 
-(defonce datasource (doto (new PGPoolingDataSource)
+(def datasource (doto (new PGPoolingDataSource)
                       (.setServerName   (-> config :db :servername))
                       (.setDatabaseName (-> config :db :databasename))
                       (.setUser         (-> config :db :username))

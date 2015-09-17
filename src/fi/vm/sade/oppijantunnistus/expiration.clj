@@ -4,9 +4,9 @@
             [clj-time.local :as l]
             [clj-time.coerce :as c]))
 
-(defonce ^{:private true} timezone-id "Europe/Helsinki")
+(def ^:private timezone-id "Europe/Helsinki")
 
-(defonce ^{:private true} formatter (f/formatter "yyyy-MM-dd HH:mm:ss" (t/time-zone-for-id timezone-id)))
+(def ^:private formatter (f/formatter "yyyy-MM-dd HH:mm:ss" (t/time-zone-for-id timezone-id)))
 
 (defn create-expiration-timestamp [] (str (f/unparse formatter (t/plus (l/local-now) (t/months 1))) " " timezone-id))
 

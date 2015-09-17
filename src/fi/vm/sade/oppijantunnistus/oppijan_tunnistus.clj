@@ -11,16 +11,16 @@
             [fi.vm.sade.oppijantunnistus.expiration :refer [create-expiration-timestamp is-valid]]))
 
 
-(defn ^{:private true} add-token [valid_until email token callback_url]
+(defn ^:private add-token [valid_until email token callback_url]
   (->> (db/exec add-secure-link! {:valid_until valid_until
                                   :email email
                                   :token token
                                   :callback_url callback_url})))
 
-(defn ^{:private true} get-token [token]
+(defn ^:private get-token [token]
   (->> (db/exec get-secure-link {:token token}) first))
 
-(defonce ^{:private true} email-template (slurp (io/resource "email/email.mustache" )))
+(def ^:private email-template (slurp (io/resource "email/email.mustache" )))
 
 (defn retrieve-email-and-validity-with-token [token]
   (let [entry (get-token token)]
@@ -31,20 +31,23 @@
 
 (set-cas (-> config :cas :url))
 
-(defn send-verification-link [email callback_url]
-  (let [token (generate-token)
-        verification_link (str callback_url token)
+(defn ^:private send-ryhmasahkoposti [email callback_url token]
+  (let [verification_link (str callback_url token)
         template (render email-template {:verification-link verification_link})]
+    @(post (apply cas-params (-> config :ryhmasahkoposti :params))
+             (-> config :ryhmasahkoposti :url)
+             (write-str {:email {:from "no-reply@opintopolku.fi"
+                                 :subject "Verification link"
+                                 :body template
+                                 :isHtml true}
+                         :recipient [{:email email}] })
+             :content-type ["application" "json"])
+    verification_link
+    ))
+
+(defn send-verification-link [email callback_url]
+  (let [token (generate-token)]
     (if (add-token (create-expiration-timestamp) email token callback_url)
-      (do
-        @(post (apply cas-params (-> config :ryhmasahkoposti :params))
-                 (-> config :ryhmasahkoposti :url)
-                 (write-str {:email {:from "no-reply@opintopolku.fi"
-                                        :subject "Verification link"
-                                        :body template
-                                        :isHtml true}
-                                  :recipient [{:email email}] })
-                 :content-type ["application" "json"])
-        verification_link)
+      (send-ryhmasahkoposti email callback_url token)
       (log/error "Saving token to database failed!"))
     ))
