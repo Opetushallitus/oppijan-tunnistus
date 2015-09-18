@@ -13,7 +13,11 @@
                  [oph/clj-util "0.1.0-SNAPSHOT" :exclusions [org.scala-lang/scala-reflect
                                                              org.scala-lang.modules/scala-xml_2.11
                                                              org.scala-lang.modules/scala-parser-combinators_2.11
-                                                             de.flapdoodle.embed/de.flapdoodle.embed.mongo]]
+                                                             de.flapdoodle.embed/de.flapdoodle.embed.mongo
+                                                             org.json4s/json4s-jackson_2.11
+                                                             org.scala-lang/scala-compiler
+                                                             org.scalatra.scalate/scalate-core_2.11
+                                                             com.fasterxml.jackson.dataformat/jackson-dataformat-yaml]]
 
                  ;; HTTP server
                  [javax.servlet/servlet-api "2.5"]
@@ -27,9 +31,6 @@
                  ;; Routing
                  [compojure "1.4.0"]
                  [metosin/compojure-api "0.23.1"]
-
-                 ;; JSON
-                 [cheshire "5.5.0"]
 
                  ;; SQL + migrations
                  [yesql "0.5.0"]
