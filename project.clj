@@ -39,11 +39,6 @@
                  ;; E-mail
                  [de.ubercode.clostache/clostache "1.4.0"]
 
-                 ;; Testing
-                 [speclj "3.3.1"]
-                 ;; for junit output: lein spec -f junit
-                 [speclj-junit "0.0.10"]
-
                  ;; Configuration
                  [environ "1.0.0"]
 
@@ -56,6 +51,10 @@
                  [org.clojure/tools.trace "0.7.8"]
                  [clj-time "0.11.0"]
                  [pandect "0.5.3"]]
+
+  :profiles {:dev
+             {:dependencies [[speclj "3.3.1"]
+                             [speclj-junit "0.0.10"]]}}
 
   :main fi.vm.sade.oppijantunnistus.main
 
