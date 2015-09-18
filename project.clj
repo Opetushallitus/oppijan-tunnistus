@@ -10,20 +10,19 @@
   :dependencies [[org.clojure/clojure "1.7.0"]
                  [org.clojure/data.json "0.2.6"]
                  ; CAS
-                 [fi.vm.sade/scala-utils_2.11 "0.2.0-SNAPSHOT"]
-                 [org.http4s/http4s-blaze-client_2.11 "0.10.0"]
-                 [oph/clj-util "0.1.0-SNAPSHOT"]
+                 [oph/clj-util "0.1.0-SNAPSHOT" :exclusions [org.scala-lang/scala-reflect
+                                                             org.scala-lang.modules/scala-xml_2.11
+                                                             org.scala-lang.modules/scala-parser-combinators_2.11
+                                                             de.flapdoodle.embed/de.flapdoodle.embed.mongo]]
+
                  ;; HTTP server
                  [javax.servlet/servlet-api "2.5"]
-                 [http-kit "2.1.19"]
                  [clj-http "1.0.1"]
                  [ring "1.4.0"]
                  [ring/ring-jetty-adapter "1.4.0"]
                  [ring/ring-servlet "1.4.0"]
-                 [ring/ring-devel "1.4.0"]
                  [ring/ring-json "0.4.0"]
                  [ring/ring-core "1.4.0"]
-                 [hiccup "1.0.5"]
 
                  ;; Routing
                  [compojure "1.4.0"]
@@ -31,12 +30,10 @@
 
                  ;; JSON
                  [cheshire "5.5.0"]
-                 ;[prismatic/schema "0.4.4"]
 
                  ;; SQL + migrations
                  [yesql "0.5.0"]
                  [org.postgresql/postgresql "9.4-1202-jdbc42"]
-                 ;[hikari-cp "1.3.1" :exclusions [prismatic/schema]]
                  [org.flywaydb/flyway-core "3.2.1"]
 
                  ;; E-mail
@@ -51,11 +48,9 @@
                  [environ "1.0.0"]
 
                  ;; Logging
-                 ;[org.slf4j/slf4j-log4j12 "1.7.12"]
+                 [org.slf4j/slf4j-api "1.7.12"]
                  [ch.qos.logback/logback-classic	"1.1.3"]
                  [org.clojure/tools.logging "0.3.1"]
-                 [ring.middleware.logger "0.5.0"]
-                 [ring.middleware.conditional "0.2.0"]
 
                  ;; Utils
                  [org.clojure/tools.trace "0.7.8"]
