@@ -66,22 +66,31 @@
 
   :target-path "target/%s"
 
-  :prep-tasks [
-               "javac"
-               "compile"
-               ]
-
   :plugins [[speclj "3.3.1"]
             [lein-environ "1.0.0"]
             [lein-shell "0.4.0"]
             [lein-auto "0.1.2"]
             [lein-ancient "0.6.7"]
-            [lein-ring "0.8.11"]]
+            [lein-ring "0.8.11"]
+            [lein-resource "14.10.2"]]
 
-  ;:jvm-opts ["-Doppijantunnistus.properties=someedn.edn"]
-  
+  :prep-tasks ["javac" "compile" "resource"]
+
+  :resource-paths ["resources" "target/generated-resources"]
+
+  :resource {:resource-paths ["templates"]
+             :target-path "target/generated-resources/public"
+             :update   false
+             :extra-values {:version "0.1.0-SNAPSHOT"
+                            :buildNumber ~(java.lang.System/getProperty "buildNumber")
+                            :branchName ~(java.lang.System/getProperty "branchName")
+                            :revisionNumber ~(java.lang.System/getProperty "revisionNumber")
+                            :buildTime ~(.format
+                                          (java.text.SimpleDateFormat. "yyyyMMdd-HHmm")
+                                          (java.util.Date.) )}
+             :silent false
+             }
   :test-paths ["spec"]
-  ;:uberjar-exclusions [#".*"]
 
   :aliases {"dbmigrate" ["run" "-m" "fi.vm.sade.oppijantunnistus.db/migrate"]}
 

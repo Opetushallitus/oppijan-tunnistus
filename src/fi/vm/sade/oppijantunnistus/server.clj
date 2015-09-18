@@ -15,19 +15,19 @@
 
 (defroutes* oppijan-tunnistus-routes
             "Oppijan tunnistus API"
-           (GET* "/token/:token" [token]
+            (GET* "/token/:token" [token]
                  :responses {200 {:schema ValidityResponse
                                   :description "Returns token validity and email in case token exists"}}
                  :summary   "Verify token"
                  (response (retrieve-email-and-validity-with-token token)))
-           (POST* "/token" []
+            (POST* "/token" []
                   :responses  {200 {:schema s/Str
                                     :description "Verification email sent.
                                     Returns verification-url that is same as callback-url+token."}}
                   :body       [sndReq SendRequest]
                   :summary    "Send verification email"
                   (ok (send-verification-link (sndReq :email) (sndReq :url))))
-           (route/not-found "Page not found"))
+            (route/not-found "Page not found"))
 
 (defroutes* doc-routes
             "API documentation browser"
@@ -36,6 +36,7 @@
 
 (defapi app
         (context* "/oppijan-tunnistus" []
+                  (route/resources "/")
                   (context* "/api/v1" [] oppijan-tunnistus-routes)
                   (context* "/swagger" [] doc-routes)))
 
