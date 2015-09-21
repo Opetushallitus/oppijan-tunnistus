@@ -1,10 +1,8 @@
 # oppijan-tunnistus
 
-## Run locally
+## Run locally, Open url http://localhost:9090/oppijan-tunnistus/swagger
 
 ./lein run
-
-Open url http://localhost:8080/oppijan-tunnistus/swagger
 
 ## Creating executable JAR
 

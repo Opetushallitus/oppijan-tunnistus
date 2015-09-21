@@ -7,5 +7,5 @@
       :username "postgres"
       :password "postgres"
       :port 5432}
- :server {:port 8080
+ :server {:port 9090
           :base-url "/oppijan-tunnistus"}}
