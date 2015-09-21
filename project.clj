@@ -53,8 +53,14 @@
                  [clj-time "0.11.0"]
                  [pandect "0.5.3"]]
 
-  :profiles {:dev
-             {:dependencies [[speclj "3.3.1"]
+  :prep-tasks ["compile"]
+
+  :profiles {:uberjar {:prep-tasks ["compile" "resource"]}
+             :test
+             {:prep-taks ["compile"]
+              :jvm-opts ["-Doppijantunnistus.properties=config/spec.edn"]
+              :dependencies [[speclj "3.3.1"]
+                             [ring/ring-mock "0.3.0"]
                              [speclj-junit "0.0.10"]]}}
 
   :main fi.vm.sade.oppijantunnistus.main
@@ -69,7 +75,6 @@
             [lein-ring "0.8.11"]
             [lein-resource "14.10.2"]]
 
-  :prep-tasks ["javac" "compile" "resource"]
 
   :resource-paths ["resources" "target/generated-resources"]
 

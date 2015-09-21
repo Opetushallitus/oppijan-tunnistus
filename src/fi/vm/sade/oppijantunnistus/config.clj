@@ -1,8 +1,8 @@
 (ns fi.vm.sade.oppijantunnistus.config
-  (:use   [clojure.edn]
-          [environ.core :refer [env]]))
+  (:require [environ.core :refer [env]]
+            [clojure.edn :as edn]))
 
 
-(def config (-> (or (env :oppijantunnistus-properties) "config/reference.edn")
-                    (slurp)
-                    (clojure.edn/read-string)))
+(def cfg (-> (or (env :oppijantunnistus-properties) "config/reference.edn")
+             (slurp)
+             (edn/read-string)))

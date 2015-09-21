@@ -6,7 +6,7 @@
             [clojure.java.io :as io]
             [clj-util.cas :refer [set-cas cas-params post]]
             [clojure.data.json :refer [write-str]]
-            [fi.vm.sade.oppijantunnistus.config :refer [config]]
+            [fi.vm.sade.oppijantunnistus.config :refer [cfg]]
             [clojure.tools.logging :as log]
             [fi.vm.sade.oppijantunnistus.expiration :refer [create-expiration-timestamp is-valid]]))
 
@@ -29,13 +29,12 @@
       {:email (entry :email) :valid (is-valid (entry :valid_until))}
       {:valid false})))
 
-(set-cas (-> config :cas :url))
-
 (defn ^:private send-ryhmasahkoposti [email callback_url token]
   (let [verification_link (str callback_url token)
         template (render email-template {:verification-link verification_link})]
-    @(post (apply cas-params (-> config :ryhmasahkoposti :params))
-             (-> config :ryhmasahkoposti :url)
+    (set-cas (-> cfg :cas :url))
+    @(post (apply cas-params (-> cfg :ryhmasahkoposti :params))
+             (-> cfg :ryhmasahkoposti :url)
              (write-str {:email {:from "no-reply@opintopolku.fi"
                                  :subject "Verification link"
                                  :body template

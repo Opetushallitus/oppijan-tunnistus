@@ -1,7 +1,7 @@
 (ns fi.vm.sade.oppijantunnistus.db.db-util
   (:gen-class)
   (:use [clojure.tools.trace :only [trace]]
-        [fi.vm.sade.oppijantunnistus.config :refer [config]]
+        [fi.vm.sade.oppijantunnistus.config :refer [cfg]]
         [clojure.java.jdbc])
   (:require [clojure.tools.logging :as log]
             [clojure.tools.logging :as log])
@@ -13,15 +13,15 @@
           [org.postgresql.ds PGPoolingDataSource]))
 
 (def datasource (doto (new PGPoolingDataSource)
-                      (.setServerName   (-> config :db :servername))
-                      (.setDatabaseName (-> config :db :databasename))
-                      (.setUser         (-> config :db :username))
-                      (.setPassword     (-> config :db :password))
-                      (.setPortNumber   (-> config :db :port))
+                      (.setServerName   (-> cfg :db :servername))
+                      (.setDatabaseName (-> cfg :db :databasename))
+                      (.setUser         (-> cfg :db :username))
+                      (.setPassword     (-> cfg :db :password))
+                      (.setPortNumber   (-> cfg :db :port))
                       (.setMaxConnections 3)))
 
 (defn migrate [& migration-paths]
-  (let [schema-name (-> config :db :schema)
+  (let [schema-name (-> cfg :db :schema)
         flyway (doto (Flyway.)
                  (.setSchemas (into-array String [schema-name]))
                  (.setDataSource datasource)

@@ -1,0 +1,11 @@
+{:cas {:url "http://localhost:3000"}
+ :ryhmasahkoposti {:params ["http://localhost:3000" "oppijantunnistus" "ophtest12#"]
+                   :url "http://localhost:3000/ryhmasahkoposti-service/email"}
+ :db {:schema "public"
+      :servername "oppijantunnistusdb"
+      :databasename "oppijantunnistusdb"
+      :username "postgres"
+      :password "postgres"
+      :port 5432}
+ :server {:port 8080
+          :base-url "/oppijan-tunnistus"}}

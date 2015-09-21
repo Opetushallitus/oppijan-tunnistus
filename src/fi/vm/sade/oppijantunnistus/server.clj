@@ -1,12 +1,13 @@
 (ns fi.vm.sade.oppijantunnistus.server
-  (:use   [fi.vm.sade.oppijantunnistus.config :refer [config]]
-          [fi.vm.sade.oppijantunnistus.oppijan-tunnistus])
+  (:use   [fi.vm.sade.oppijantunnistus.oppijan-tunnistus])
   (:require [ring.middleware.json :refer [wrap-json-response wrap-json-params]]
             [ring.util.response :refer [response]]
             [ring.util.http-response :refer [ok]]
+            [cheshire.core :refer [parse-string]]
             [compojure.api.sweet :refer :all]
             [compojure.core :refer [defroutes GET POST context]]
             [compojure.route :as route]
+            [clojure.tools.logging :as log]
             [schema.core :as s]
             [hiccup.middleware :refer [wrap-base-url]]))
 
@@ -20,13 +21,16 @@
                                   :description "Returns token validity and email in case token exists"}}
                  :summary   "Verify token"
                  (response (retrieve-email-and-validity-with-token token)))
-            (POST* "/token" []
+            (POST* "/token" req
                   :responses  {200 {:schema s/Str
                                     :description "Verification email sent.
                                     Returns verification-url that is same as callback-url+token."}}
-                  :body       [sndReq SendRequest]
+                  ;:body       [r SendRequest]
                   :summary    "Send verification email"
-                  (ok (send-verification-link (sndReq :email) (sndReq :url))))
+                  (let [s_req (parse-string (slurp (:body req)) true)]
+                    (if (s/validate SendRequest s_req)
+                      (ok (send-verification-link (s_req :email) (s_req :url)))
+                      (log/error "Not valid send request JSON"))))
             (route/not-found "Page not found"))
 
 (defroutes* doc-routes
@@ -34,7 +38,7 @@
             (swagger-docs {:info {:title "Oppijan tunnistus API"}})
             (swagger-ui :swagger-docs "/oppijan-tunnistus/swagger/swagger.json"))
 
-(defapi app
+(defapi oppijan-tunnistus-api
         (context* "/oppijan-tunnistus" []
                   (route/resources "/")
                   (context* "/api/v1" [] oppijan-tunnistus-routes)
