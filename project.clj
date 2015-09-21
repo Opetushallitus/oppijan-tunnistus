@@ -56,12 +56,20 @@
   :prep-tasks ["compile"]
 
   :profiles {:uberjar {:prep-tasks ["compile" "resource"]}
-             :test
-             {:prep-taks ["compile"]
-              :jvm-opts ["-Doppijantunnistus.properties=config/spec.edn"]
-              :dependencies [[speclj "3.3.1"]
-                             [ring/ring-mock "0.3.0"]
-                             [speclj-junit "0.0.10"]]}}
+             :test  {:prep-tasks ["compile" "resource"]
+                     :jvm-opts ["-Doppijantunnistus.properties=target/spec.edn"
+                                "-DfakeServerPort=5000"]
+                     :dependencies [[speclj "3.3.1"]
+                                    [com.cemerick/url "0.1.1"]
+                                    [ring/ring-mock "0.3.0"]
+                                    [speclj-junit "0.0.10"]]
+                     :resource {:resource-paths ["config"]
+                                :target-path "target"
+                                :includes [ #".*spec.edn" ]
+                                :update false ;; if true only process files with src newer than dest
+                                :extra-values {:fakeServerPort ~(str (+ 10000 (rand-int 50000)))}
+                                :silent false
+                                }}}
 
   :main fi.vm.sade.oppijantunnistus.main
 
@@ -80,7 +88,7 @@
 
   :resource {:resource-paths ["templates"]
              :target-path "target/generated-resources/public"
-             :update   false
+             :update false ;; if true only process files with src newer than dest
              :extra-values {:version "0.1.0-SNAPSHOT"
                             :buildNumber ~(java.lang.System/getProperty "buildNumber")
                             :branchName ~(java.lang.System/getProperty "branchName")

@@ -4,11 +4,14 @@
             [ring.util.http-response :refer [ok]]
             [compojure.api.sweet :refer :all]
             [compojure.core :refer [defroutes GET POST context]]
+            [fi.vm.sade.oppijantunnistus.config :refer [cfg]]
             [clojure.tools.logging :as log]
+            [cemerick.url :refer [url]]
             [ring.adapter.jetty :refer [run-jetty]]))
 
-(def ^:private port 3000)
-;(+ 10000 (rand-int 50000)))
+(def ^:private port
+  (-> (url (-> cfg :cas :url))
+      (get :port)))
 
 (def cas_url (str "http://localhost:" port))
 
