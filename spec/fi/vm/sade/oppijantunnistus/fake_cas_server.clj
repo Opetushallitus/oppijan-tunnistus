@@ -9,7 +9,7 @@
             [cemerick.url :refer [url]]
             [ring.adapter.jetty :refer [run-jetty]]))
 
-(def ^:private port
+(def port
   (-> (url (-> cfg :cas :url))
       (get :port)))
 

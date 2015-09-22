@@ -25,12 +25,9 @@
                   :responses  {200 {:schema s/Str
                                     :description "Verification email sent.
                                     Returns verification-url that is same as callback-url+token."}}
-                  ;:body       [r SendRequest]
+                  :body       [s_req SendRequest]
                   :summary    "Send verification email"
-                  (let [s_req (parse-string (slurp (:body req)) true)]
-                    (if (s/validate SendRequest s_req)
-                      (ok (send-verification-link (s_req :email) (s_req :url)))
-                      (log/error "Not valid send request JSON"))))
+                  (ok (send-verification-link (s_req :email) (s_req :url))))
             (route/not-found "Page not found"))
 
 (defroutes* doc-routes
