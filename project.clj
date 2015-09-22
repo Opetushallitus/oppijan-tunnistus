@@ -99,6 +99,7 @@
              }
   :test-paths ["spec"]
 
-  :aliases {"dbmigrate" ["run" "-m" "fi.vm.sade.oppijantunnistus.db/migrate"]}
+  :aliases {"dbmigrate" ["run" "-m" "fi.vm.sade.oppijantunnistus.db/migrate"]
+            "fakeserver" ["run" "-m" "fi.vm.sade.oppijantunnistus.fake_cas_server/start-cas-app"]}
 
 )

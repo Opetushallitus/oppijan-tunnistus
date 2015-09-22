@@ -1,5 +1,5 @@
 {:cas {:url "http://localhost:{{fakeServerPort}}"}
- :ryhmasahkoposti {:params ["http://localhost:{{fakeServerPort}}" "oppijantunnistus" "ophtest12#"]
+ :ryhmasahkoposti {:params ["http://localhost:{{fakeServerPort}}/ryhmasahkoposti-service" "oppijantunnistus" "ophtest12#"]
                    :url "http://localhost:{{fakeServerPort}}/ryhmasahkoposti-service/email"}
  :db {:schema "public"
       :servername "oppijantunnistusdb"

@@ -10,16 +10,15 @@
 
           (before-all
             (db/migrate)
-            start-cas-app)
+            (start-cas-app))
 
           (after-all
-            stop-cas-app)
+            (stop-cas-app))
 
           (it "doesn't fail on unknown token query"
               (let [response (oppijan-tunnistus-routes (request :get "/token/smoken"))]
                 (should (= 200 (:status response)))
                 (should (= false (-> response :body :valid)))))
-
 
           (it "should send verification email and return token"
               (let [response (oppijan-tunnistus-routes (-> (request :post "/token")

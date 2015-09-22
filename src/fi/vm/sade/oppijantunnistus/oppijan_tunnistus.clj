@@ -24,25 +24,30 @@
 
 (defn retrieve-email-and-validity-with-token [token]
   (let [entry (get-token token)]
-    (println entry)
     (if entry
       {:email (entry :email) :valid (is-valid (entry :valid_until))}
       {:valid false})))
 
 (defn ^:private send-ryhmasahkoposti [email callback_url token]
   (let [verification_link (str callback_url token)
-        template (render email-template {:verification-link verification_link})]
-    (set-cas (-> cfg :cas :url))
-    @(post (apply cas-params (-> cfg :ryhmasahkoposti :params))
-             (-> cfg :ryhmasahkoposti :url)
-             (write-str {:email {:from "no-reply@opintopolku.fi"
-                                 :subject "Verification link"
-                                 :body template
-                                 :isHtml true}
-                         :recipient [{:email email}] })
-             :content-type ["application" "json"])
-    verification_link
-    ))
+        template (render email-template {:verification-link verification_link})
+        cas_url (-> cfg :cas :url)
+        ryhmasahkoposti_params (-> cfg :ryhmasahkoposti :params)
+        ryhmasahkoposti_url (-> cfg :ryhmasahkoposti :url)
+        mail_json (write-str {:email {:from "no-reply@opintopolku.fi"
+                                      :subject "Verification link"
+                                      :body template
+                                      :isHtml true}
+                              :recipient [{:email email}] })]
+    (set-cas cas_url)
+    (let [response (try
+                     @(post (apply cas-params ryhmasahkoposti_params) ryhmasahkoposti_url mail_json :content-type ["application" "json"])
+                     (catch Throwable t (log/error "Sending ryhmasahkoposti failed!" t)))]
+    (if (= 200 (-> response :status :code))
+      verification_link
+      (do (log/error "Sending email failed!" response)
+          (throw (Exception. "Sending email failed!")))
+      ))))
 
 (defn send-verification-link [email callback_url]
   (let [token (generate-token)]
