@@ -7,5 +7,6 @@
       :username "{{oppijantunnistus_db_username}}"
       :password "{{oppijantunnistus_db_password}}"
       :port {{oppijantunnistus_db_port}}}
+ :expires-in { :days {{oppijantunnistus_expires_in_days}} }
  :server {:port {{palvelu_portti}}
           :base-url "/oppijan-tunnistus"}}
