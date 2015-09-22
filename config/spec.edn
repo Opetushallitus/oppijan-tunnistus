@@ -7,5 +7,6 @@
       :username "postgres"
       :password "postgres"
       :port 5432}
+ :expires-in { :days 5 }
  :server {:port 8080
           :base-url "/oppijan-tunnistus"}}
