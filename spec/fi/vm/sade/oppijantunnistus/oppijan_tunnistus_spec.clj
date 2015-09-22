@@ -1,6 +1,6 @@
 (ns fi.vm.sade.oppijantunnistus.oppijan_tunnistus_spec
     (:require [speclj.core :refer :all]
-              [fi.vm.sade.oppijantunnistus.fake_cas_server :refer [cas_url start-cas-app stop-cas-app]]
+              [fi.vm.sade.oppijantunnistus.fake_cas_server :refer [cas_url start-cas-app stop-cas-app enable_server]]
               [fi.vm.sade.oppijantunnistus.server :refer [oppijan-tunnistus-routes]]
               [ring.mock.request :refer [request content-type body]]
               [clojure.data.json :refer [write-str]]
@@ -38,6 +38,14 @@
                   (should (= "test@email.com" (-> response :body :email)))
                   (should (= true (-> response :body :valid))))))
 
+          (it "should fail if ryhmasahkoposti is down"
+              (enable_server false)
+              (try
+                (should-throw (oppijan-tunnistus-routes (-> (request :post "/token")
+                                                           (body (write-str {:url "#"
+                                                                             :email "test@email.com"}))
+                                                           (content-type "application/json"))))
+                (finally (enable_server true))))
           )
 
 (run-specs)
