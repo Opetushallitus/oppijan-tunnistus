@@ -1,6 +1,6 @@
-{:cas {:url "https://{{host_oppija}}"}
- :ryhmasahkoposti {:params ["https://{{host_oppija}}/ryhmasahkoposti-service" "{{oppijantunnistus_cas_user}}" "{{oppijantunnistus_cas_password}}"]
-                   :url "https://{{host_oppija}}/ryhmasahkoposti-service/email"}
+{:cas {:url "https://{{host_virkailija}}"}
+ :ryhmasahkoposti {:params ["https://{{host_virkailija}}/ryhmasahkoposti-service" "{{oppijantunnistus_cas_user}}" "{{oppijantunnistus_cas_password}}"]
+                   :url "https://{{host_virkailija}}/ryhmasahkoposti-service/email"}
  :db {:schema "public"
       :servername "{{oppijantunnistus_db_host}}"
       :databasename "{{oppijantunnistus_db_name}}"
