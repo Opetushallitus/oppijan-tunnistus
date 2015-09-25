@@ -6,6 +6,8 @@
             [fi.vm.sade.oppijantunnistus.db.db-util :as db])
   (:gen-class))
 
+(set! *warn-on-reflection* true)
+
 (defn -main [& args]
   (log/info "Using configuration: " cfg)
   (log/info "Running db migrations")
