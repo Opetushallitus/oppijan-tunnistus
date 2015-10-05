@@ -53,6 +53,8 @@
                  [clj-time "0.11.0"]
                  [pandect "0.5.3"]]
 
+  :javac-options ["-target" "1.8" "-source" "1.8" "-Xlint:-options"]
+
   :prep-tasks ["compile"]
 
   :profiles {:uberjar {:prep-tasks ["compile" "resource"]}
