@@ -1,8 +1,14 @@
 (ns fi.vm.sade.oppijantunnistus.token
-  (:require [pandect.algo.sha256 :refer :all])
+  (:require [pandect.algo.sha256 :refer :all]
+            [clojure.tools.logging :as log])
   (:import [java.security SecureRandom]))
 
-(def ^:private random (SecureRandom.))
+(def ^:private random (let [rnd (SecureRandom.)]
+                        (log/info "Initializing securerandom...")
+                        (log/info "Done " (.generateSeed rnd 64))
+                        rnd))
 
 (defn generate-token []
-  (sha256 (.generateSeed random (/ 512 8))))
+  (let [arr (byte-array 64)]
+    (.nextBytes random arr)
+    (sha256 arr)))
