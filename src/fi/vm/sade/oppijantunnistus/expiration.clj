@@ -9,6 +9,11 @@
 
 (def ^:private formatter (f/formatter "yyyy-MM-dd HH:mm:ss" (t/time-zone-for-id timezone-id)))
 
-(defn create-expiration-timestamp [] (str (f/unparse formatter (t/plus (l/local-now) (t/days (-> cfg :expires-in :days)))) " " timezone-id))
+(def ^:private template-formatter (f/formatter "dd.MM.yyyy" (t/time-zone-for-id timezone-id)))
+
+(defn create-expiration-timestamp [] (t/plus (l/local-now) (t/days (-> cfg :expires-in :days))))
+
+(defn to-date-string [timestamp] (f/unparse template-formatter timestamp))
+(defn to-psql-timestamp [timestamp] (str (f/unparse formatter timestamp) " " timezone-id))
 
 (defn is-valid [sql-timestamp] (t/before? (l/local-now) (c/from-sql-time sql-timestamp)))

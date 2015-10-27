@@ -8,7 +8,7 @@
             [clojure.data.json :refer [write-str]]
             [fi.vm.sade.oppijantunnistus.config :refer [cfg]]
             [clojure.tools.logging :as log]
-            [fi.vm.sade.oppijantunnistus.expiration :refer [create-expiration-timestamp is-valid]]))
+            [fi.vm.sade.oppijantunnistus.expiration :refer [create-expiration-timestamp to-date-string to-psql-timestamp is-valid]]))
 
 
 (defn ^:private add-token [valid_until email token callback_url]
@@ -28,9 +28,10 @@
       {:email (entry :email) :valid (is-valid (entry :valid_until)) :exists true}
       {:valid false :exists false})))
 
-(defn ^:private send-ryhmasahkoposti [email callback_url token]
+(defn ^:private send-ryhmasahkoposti [expires email callback_url token]
   (let [verification_link (str callback_url token)
-        template (render email-template {:verification-link verification_link})
+        template (render email-template {:verification-link verification_link
+                                         :expires (to-date-string expires)})
         cas_url (-> cfg :cas :url)
         ryhmasahkoposti_params (-> cfg :ryhmasahkoposti :params)
         ryhmasahkoposti_url (-> cfg :ryhmasahkoposti :url)
@@ -50,8 +51,9 @@
       ))))
 
 (defn send-verification-link [email callback_url]
-  (let [token (generate-token)]
-    (if (add-token (create-expiration-timestamp) email token callback_url)
-      (send-ryhmasahkoposti email callback_url token)
+  (let [token (generate-token)
+        expires (create-expiration-timestamp)]
+    (if (add-token (to-psql-timestamp expires) email token callback_url)
+      (send-ryhmasahkoposti expires email callback_url token)
       (log/error "Saving token to database failed!"))
     ))
