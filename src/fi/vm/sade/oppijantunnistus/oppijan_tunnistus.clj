@@ -25,8 +25,8 @@
 (defn retrieve-email-and-validity-with-token [token]
   (let [entry (get-token token)]
     (if entry
-      {:email (entry :email) :valid (is-valid (entry :valid_until))}
-      {:valid false})))
+      {:email (entry :email) :valid (is-valid (entry :valid_until)) :exists true}
+      {:valid false :exists false})))
 
 (defn ^:private send-ryhmasahkoposti [email callback_url token]
   (let [verification_link (str callback_url token)

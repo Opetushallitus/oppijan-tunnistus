@@ -27,7 +27,8 @@
               (let [response (client/get (make_url_from_path "/token/smoken"))
                     json (parse-string (response :body) true)]
                 (should (= 200 (:status response)))
-                (should (= false (json :valid )))))
+                (should (= false (json :valid )))
+                (should (= false (json :exists)))))
 
           (it "should send verification email and return token"
               (let [response (client/post (make_url_from_path "/token")
@@ -49,7 +50,8 @@
                       body (parse-string (response :body) true)]
                   (should (= 200 (:status response)))
                   (should (= "test@email.com" (-> body :email)))
-                  (should (= true (-> body :valid))))))
+                  (should (= true (-> body :valid)))
+                  (should (= true (-> body :exists))))))
 
           (it "should fail if ryhmasahkoposti is down"
               (enable_server false)

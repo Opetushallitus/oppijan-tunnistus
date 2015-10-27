@@ -11,7 +11,7 @@
             [schema.core :as s]
             [hiccup.middleware :refer [wrap-base-url]]))
 
-(s/defschema ValidityResponse {:valid s/Bool (s/optional-key :email) s/Str})
+(s/defschema ValidityResponse {:exists s/Bool :valid s/Bool (s/optional-key :email) s/Str})
 (s/defschema SendRequest {:url s/Str :email s/Str})
 
 (defroutes* oppijan-tunnistus-routes
