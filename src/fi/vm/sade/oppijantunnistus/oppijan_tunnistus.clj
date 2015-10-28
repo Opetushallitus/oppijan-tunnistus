@@ -8,7 +8,7 @@
             [clojure.data.json :refer [write-str]]
             [fi.vm.sade.oppijantunnistus.config :refer [cfg]]
             [clojure.tools.logging :as log]
-            [fi.vm.sade.oppijantunnistus.expiration :refer [create-expiration-timestamp to-date-string to-psql-timestamp is-valid]]))
+            [fi.vm.sade.oppijantunnistus.expiration :refer [create-expiration-timestamp now-timestamp to-date-string to-psql-timestamp is-valid]]))
 
 
 (defn ^:private add-token [valid_until email token callback_url]
@@ -31,12 +31,13 @@
 (defn ^:private send-ryhmasahkoposti [expires email callback_url token]
   (let [verification_link (str callback_url token)
         template (render email-template {:verification-link verification_link
-                                         :expires (to-date-string expires)})
+                                         :expires (to-date-string expires)
+                                         :submit_time (to-date-string (now-timestamp))})
         cas_url (-> cfg :cas :url)
         ryhmasahkoposti_params (-> cfg :ryhmasahkoposti :params)
         ryhmasahkoposti_url (-> cfg :ryhmasahkoposti :url)
         mail_json (write-str {:email {:from "no-reply@opintopolku.fi"
-                                      :subject "Verification link"
+                                      :subject "Studyinfo – login link"
                                       :body template
                                       :isHtml true}
                               :recipient [{:email email}] })]
