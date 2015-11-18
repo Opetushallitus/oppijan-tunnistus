@@ -11,8 +11,8 @@
             [schema.core :as s]
             [hiccup.middleware :refer [wrap-base-url]]))
 
-(s/defschema ValidityResponse {:exists s/Bool :valid s/Bool (s/optional-key :email) s/Str})
-(s/defschema SendRequest {:url s/Str :email s/Str})
+(s/defschema ValidityResponse {:exists s/Bool :valid s/Bool (s/optional-key :email) s/Str (s/optional-key :metadata) (s/conditional map? {s/Keyword s/Keyword})})
+(s/defschema SendRequest {:url s/Str :email s/Str (s/optional-key :metadata) (s/conditional map? {s/Keyword s/Keyword})})
 
 (defroutes* oppijan-tunnistus-routes
             "Oppijan tunnistus API"
@@ -27,7 +27,7 @@
                                     Returns verification-url that is same as callback-url+token."}}
                   :body       [s_req SendRequest]
                   :summary    "Send verification email"
-                  (ok (send-verification-link (s_req :email) (s_req :url))))
+                  (ok (send-verification-link (s_req :email) (s_req :url) (s_req :metadata))))
             (route/not-found "Page not found"))
 
 (defroutes* doc-routes
@@ -36,6 +36,7 @@
             (swagger-ui :swagger-docs "/oppijan-tunnistus/swagger/swagger.json"))
 
 (defapi oppijan-tunnistus-api
+        {:ring-swagger {:ignore-missing-mappings? true}}
         (context* "/oppijan-tunnistus" []
                   (route/resources "/")
                   (context* "/api/v1" [] oppijan-tunnistus-routes)
