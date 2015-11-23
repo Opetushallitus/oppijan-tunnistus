@@ -9,10 +9,18 @@
             [compojure.route :as route]
             [clojure.tools.logging :as log]
             [schema.core :as s]
+            [ring.swagger.schema :as rs]
             [hiccup.middleware :refer [wrap-base-url]]))
 
-(s/defschema ValidityResponse {:exists s/Bool :valid s/Bool (s/optional-key :email) s/Str (s/optional-key :metadata) (s/conditional map? {s/Keyword s/Keyword})})
-(s/defschema SendRequest {:url s/Str :email s/Str (s/optional-key :metadata) (s/conditional map? {s/Keyword s/Keyword})})
+(s/defschema ValidityResponse {:exists s/Bool
+                               :valid s/Bool
+                               (s/optional-key :email) s/Str
+                               (s/optional-key :lang) s/Str
+                               (s/optional-key :metadata) (s/conditional map? {s/Keyword s/Keyword})})
+(s/defschema SendRequest {:url s/Str
+                          :email s/Str
+                          (s/optional-key :lang) (rs/describe s/Str "Email language in ISO-639-1 format. E.g. 'en','fi','sv'.")
+                          (s/optional-key :metadata) (s/conditional map? {s/Keyword s/Keyword})})
 
 (defroutes* oppijan-tunnistus-routes
             "Oppijan tunnistus API"
@@ -27,7 +35,7 @@
                                     Returns verification-url that is same as callback-url+token."}}
                   :body       [s_req SendRequest]
                   :summary    "Send verification email"
-                  (ok (send-verification-link (s_req :email) (s_req :url) (s_req :metadata))))
+                  (ok (send-verification-link (s_req :email) (s_req :url) (s_req :metadata) (s_req :lang))))
             (route/not-found "Page not found"))
 
 (defroutes* doc-routes

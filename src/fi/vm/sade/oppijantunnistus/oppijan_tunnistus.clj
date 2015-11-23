@@ -11,31 +11,34 @@
             [fi.vm.sade.oppijantunnistus.expiration :refer [create-expiration-timestamp now-timestamp to-date-string to-psql-timestamp is-valid]]))
 
 
-(defn ^:private add-token [valid_until email token callback_url metadata]
+(defn ^:private add-token [valid_until email token callback_url metadata lang]
   (->> (db/exec add-secure-link! {:valid_until valid_until
                                   :email email
                                   :token token
                                   :callback_url callback_url
+                                  :lang lang
                                   :metadata (if (some? metadata) (write-str metadata) nil) })))
 
 (defn ^:private get-token [token]
   (->> (db/exec get-secure-link {:token token}) first))
 
-(def ^:private email-template (slurp (io/resource "email/email.mustache" )))
+(def ^:private email-template {:en (slurp (io/resource "email/email_en.mustache" ))
+                               :sv (slurp (io/resource "email/email_sv.mustache" ))
+                               :fi (slurp (io/resource "email/email_fi.mustache" ))})
 
 (defn retrieve-email-and-validity-with-token [token]
   (let [entry (get-token token)]
     (if entry
-      (let [rval {:email (entry :email) :valid (is-valid (entry :valid_until)) :exists true}
+      (let [rval {:email (entry :email) :valid (is-valid (entry :valid_until)) :exists true :lang (entry :lang)}
             metadata (entry :metadata)]
         (if (some? metadata)
           (assoc rval :metadata (read-str (.getValue metadata)))
           rval))
       {:valid false :exists false})))
 
-(defn ^:private send-ryhmasahkoposti [expires email callback_url token]
+(defn ^:private send-ryhmasahkoposti [expires email callback_url token lang]
   (let [verification_link (str callback_url token)
-        template (render email-template {:verification-link verification_link
+        template (render (email-template lang) {:verification-link verification_link
                                          :expires (to-date-string expires)
                                          :submit_time (to-date-string (now-timestamp))})
         cas_url (-> cfg :cas :url)
@@ -56,10 +59,17 @@
           (throw (Exception. "Sending email failed!")))
       ))))
 
-(defn send-verification-link [email callback_url metadata]
-  (let [token (generate-token)
+(defn ^:private sanitize_lang [any_lang]
+  (case any_lang
+    "fi" any_lang
+    "sv" any_lang
+    "en"))
+
+(defn send-verification-link [email callback_url metadata any_lang]
+  (let [lang (sanitize_lang any_lang)
+        token (generate-token)
         expires (create-expiration-timestamp)]
-    (if (add-token (to-psql-timestamp expires) email token callback_url metadata)
-      (send-ryhmasahkoposti expires email callback_url token)
+    (if (add-token (to-psql-timestamp expires) email token callback_url metadata lang)
+      (send-ryhmasahkoposti expires email callback_url token lang)
       (log/error "Saving token to database failed!"))
     ))

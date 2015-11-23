@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="Content-Style-Type" content="text/css"/>
+    <style type="text/css">
+    @page { size: 210mm 297mm; margin: 16mm 10mm 30mm 12mm; @bottom-center { vertical-align: top; content: element(footer); } }
+    @font-face { font-family: Calibri; font-size: 12px; src: url(classpath:/fonts/Calibri.ttf); -fs-pdf-font-embed: embed; -fs-pdf-font-encoding: ISO-8859-15; }
+    koekutsubody { font-size: 16px; font-family: Calibri; margin: 0 0 0 11mm; }
+    body { font-size: 12px; font-family: Calibri; margin: 0; }
+    .koekutsuheader { font-size: 16px; font-family: Calibri; margin: 4mm 0 0 11mm; height: 25mm; width: 100mm; float: left; }
+    .header { margin: 4mm 0 0 11mm; height: 80mm; width: 100mm; float: left; }
+    .organisaatio { width: 80mm; height: 26mm; margin: 0; padding: 0; }
+    .osoitetarra { width: 70mm; height: 37mm; margin: 0; padding: 0; }
+    .koekutsuosoitetarra { font-size: 16px; font-family: Calibri; width: 70mm; height: 25mm; margin: 0; padding: 0; }
+    .lahetysMerkinta { font-size: 90%; }
+    .asiakirjanTyyppi { float: left; text-align: left; width: 60mm; margin: 4mm 0 0 0mm;}
+    .koekutsukirjeenpaivays { font-size: 16px; font-family: Calibri;	margin-top: 50px; margin-left: 500px;}
+    .jalkiohjauskirjeTyyppi { text-align: center;}p { padding-bottom: 0; margin-bottom: 0;}
+    .koekutsuasiaotsikko {	font-size: 16px; font-family: Calibri; margin: 15mm 0 0 11mm; clear: both; font-weight: bold;}
+    .asiaotsikko { clear: both;}.sisalto { clear: both; line-height: 140%;}
+    .sisalto {	font-size: 16px; font-family: Calibri;	margin: 0mm 0 0 11mm !important;	clear: both; line-height: 140%;}
+    .liiteSisalto { font-size: 11px; line-height: 140%;}table { border-collapse: collapse;}td, th { border: 1px solid gray; padding: 5px;}td { text-align: center;}
+    .hakutoive { text-align: left;}
+    .koekutsuhakukohde {	font-size: 16px; font-family: Calibri; margin: 5mm 0 0 11mm; text-align: left; font-weight: bold;}
+    th { vertical-align: top; text-align: center;}
+    ol, ul { padding-top: 0; margin-top: 0; font-weight: 100; padding-left: 4mm; margin-left: 2em;}
+    ul.dash { list-style: none; margin-left: 0; padding-left: 1em;}
+    ul.dash li:before { display: inline-block; content: "-"; width: 1em; margin-left: -1em;}.footer { font-size: 90%; position: running(footer);}
+    .footer .heading { width: 100%;}.footer div { float: left; width: 30mm;}
+    </style>
+    <title>Studyinfo – login link</title>
+</head>
+<body>
+    <div class="sisalto">
+    <p></p>
+    <p>You have ordered a login link to the application form: </p>
+    <a href="{{verification-link}}">{{verification-link}}</a>
+    <br/>
+    <p>If the link above does not work, you can copy and paste the address into a new browser window. If you're using a shared or public PC, remember to clear browser history afterwards.</p>
+    <p>If you have received this email in error, you can delete it.</p>
+    <p>Time when the link was ordered: {{submit_time}}</p>
+    <p>The link is valid: {{expires}}. After this you can log in by ordering a new link to your email.</p>
+    <p>This is an automatically generated email, please do not reply.</p>
+
+    <br/>
+    <br/>
+    </div>
+</body>
+</html>

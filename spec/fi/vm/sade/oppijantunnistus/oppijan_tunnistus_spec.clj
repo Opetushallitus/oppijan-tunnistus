@@ -79,7 +79,8 @@
           (it "should verify valid token"
               (let [response (client/post (make_url_from_path "/token")
                                           {:body (write-str {:url "#"
-                                                             :email "test@email.com"})
+                                                             :email "test@email.com"
+                                                             :lang "fi"})
                                            :content-type "application/json"})
                     body (parse-string (response :body) true)
                     token (subs body 1)]
@@ -87,6 +88,7 @@
                       body (parse-string (response :body) true)]
                   (should (= 200 (:status response)))
                   (should (= "test@email.com" (-> body :email)))
+                  (should (= "fi" (-> body :lang)))
                   (should (= true (-> body :valid)))
                   (should (= true (-> body :exists))))))
 
@@ -94,6 +96,7 @@
               (let [response (client/post (make_url_from_path "/token")
                                           {:body (write-str {:url "#"
                                                              :email "test@email.com"
+                                                             :lang "hu"
                                                              :metadata {:a :b}})
                                            :content-type "application/json"})
                     body (parse-string (response :body) true)
@@ -104,7 +107,8 @@
                   (should (= "test@email.com" (-> body :email)))
                   (should (= true (-> body :valid)))
                   (should (= true (-> body :exists)))
-                  (should (.equals {:a :b} (-> body :metadata))))))
+                  (should (= "en" (-> body :lang)))
+                  (should (.equals {:a "b"} (-> body :metadata))))))
 
           (it "should fail if ryhmasahkoposti is down"
               (enable_server false)
