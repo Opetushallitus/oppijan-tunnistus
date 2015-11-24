@@ -16,7 +16,7 @@
                                   :email email
                                   :token token
                                   :callback_url callback_url
-                                  :lang lang
+                                  :lang (name lang)
                                   :metadata (if (some? metadata) (write-str metadata) nil) })))
 
 (defn ^:private get-token [token]
@@ -61,9 +61,9 @@
 
 (defn ^:private sanitize_lang [any_lang]
   (case any_lang
-    "fi" any_lang
-    "sv" any_lang
-    "en"))
+    "fi" :fi
+    "sv" :sv
+    :en))
 
 (defn send-verification-link [email callback_url metadata any_lang]
   (let [lang (sanitize_lang any_lang)
