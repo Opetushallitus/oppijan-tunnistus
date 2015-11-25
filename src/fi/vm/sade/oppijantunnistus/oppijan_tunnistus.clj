@@ -25,6 +25,9 @@
 (def ^:private email-template {:en (slurp (io/resource "email/email_en.mustache" ))
                                :sv (slurp (io/resource "email/email_sv.mustache" ))
                                :fi (slurp (io/resource "email/email_fi.mustache" ))})
+(def ^:private email-subjects {:en "Studyinfo – login link"
+                               :sv "Studyinfo – login link"
+                               :fi "Opintopolku – kirjautumislinkki"})
 
 (defn retrieve-email-and-validity-with-token [token]
   (let [entry (get-token token)]
@@ -45,7 +48,7 @@
         ryhmasahkoposti_params (-> cfg :ryhmasahkoposti :params)
         ryhmasahkoposti_url (-> cfg :ryhmasahkoposti :url)
         mail_json (write-str {:email {:from "no-reply@opintopolku.fi"
-                                      :subject "Studyinfo – login link"
+                                      :subject (email-subjects lang)
                                       :body template
                                       :isHtml true}
                               :recipient [{:email email}] })]
