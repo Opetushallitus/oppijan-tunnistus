@@ -19,6 +19,7 @@
                                (s/optional-key :metadata) (s/conditional map? {s/Keyword s/Keyword})})
 (s/defschema SendRequest {:url s/Str
                           :email s/Str
+                          (s/optional-key :template) (rs/describe s/Str "Email template filename. Defaults to 'email'.")
                           (s/optional-key :lang) (rs/describe s/Str "Email language in ISO-639-1 format. E.g. 'en','fi','sv'.")
                           (s/optional-key :metadata) (s/conditional map? {s/Keyword s/Keyword})})
 
@@ -35,7 +36,7 @@
                                     Returns verification-url that is same as callback-url+token."}}
                   :body       [s_req SendRequest]
                   :summary    "Send verification email"
-                  (ok (send-verification-link (s_req :email) (s_req :url) (s_req :metadata) (s_req :lang))))
+                  (ok (send-verification-link (s_req :email) (s_req :url) (s_req :metadata) (s_req :lang) (s_req :template))))
             (route/not-found "Page not found"))
 
 (defroutes* doc-routes

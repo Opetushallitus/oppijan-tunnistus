@@ -101,7 +101,8 @@
               (let [response (client/post (make_url_from_path "/token")
                                           {:body (write-str {:url "#"
                                                              :email "test@email.com"
-                                                             :lang "fi"})
+                                                             :lang "fi"
+                                                             :template "joku"})
                                            :content-type "application/json"})
                     body (parse-string (response :body) true)
                     token (subs body 1)]
