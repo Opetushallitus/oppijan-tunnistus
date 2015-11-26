@@ -26,7 +26,7 @@
                                :sv (slurp (io/resource "email/email_sv.mustache" ))
                                :fi (slurp (io/resource "email/email_fi.mustache" ))})
 (def ^:private email-subjects {:en "Studyinfo – login link"
-                               :sv "Studyinfo – login link"
+                               :sv "Studieinfo – inloggningslänk"
                                :fi "Opintopolku – kirjautumislinkki"})
 
 (defn retrieve-email-and-validity-with-token [token]
