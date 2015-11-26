@@ -55,7 +55,7 @@
         ryhmasahkoposti_params (-> cfg :ryhmasahkoposti :params)
         ryhmasahkoposti_url (-> cfg :ryhmasahkoposti :url)
         mail_json (write-str {:email {:from "no-reply@opintopolku.fi"
-                                      :subject (email-subjects lang)
+                                      :subject ((email-subjects template_name) lang)
                                       :body template
                                       :isHtml true}
                               :recipient [{:email email}] })]
