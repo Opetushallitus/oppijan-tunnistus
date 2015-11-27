@@ -102,7 +102,8 @@
                                           {:body (write-str {:url "#"
                                                              :email "test@email.com"
                                                              :lang "fi"
-                                                             :template "joku"})
+                                                             :subject "My Custom Subject"
+                                                             :template "### My Custom Template {{verification-link}} ###"})
                                            :content-type "application/json"})
                     body (parse-string (response :body) true)
                     token (subs body 1)]

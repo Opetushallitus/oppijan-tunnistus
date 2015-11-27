@@ -19,7 +19,8 @@
                                (s/optional-key :metadata) (s/conditional map? {s/Keyword s/Keyword})})
 (s/defschema SendRequest {:url s/Str
                           :email s/Str
-                          (s/optional-key :template) (rs/describe s/Str "Email template filename. Defaults to 'email'.")
+                          (s/optional-key :subject) (rs/describe s/Str "Email subject when template is used.")
+                          (s/optional-key :template) (rs/describe s/Str "Email template in moustache format. Moustache template should contain key {{verification-link}} for 'link + token' placeholder. Other optional parameters are 'submit_time', 'expires'.")
                           (s/optional-key :lang) (rs/describe s/Str "Email language in ISO-639-1 format. E.g. 'en','fi','sv'.")
                           (s/optional-key :metadata) (s/conditional map? {s/Keyword s/Keyword})})
 
@@ -36,7 +37,7 @@
                                     Returns verification-url that is same as callback-url+token."}}
                   :body       [s_req SendRequest]
                   :summary    "Send verification email"
-                  (ok (send-verification-link (s_req :email) (s_req :url) (s_req :metadata) (s_req :lang) (s_req :template))))
+                  (ok (send-verification-link (s_req :email) (s_req :url) (s_req :metadata) (s_req :lang) (s_req :template) (s_req :subject))))
             (route/not-found "Page not found"))
 
 (defroutes* doc-routes
