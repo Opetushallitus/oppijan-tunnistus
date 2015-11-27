@@ -8,7 +8,7 @@
             [clojure.data.json :refer [write-str read-str]]
             [fi.vm.sade.oppijantunnistus.config :refer [cfg]]
             [clojure.tools.logging :as log]
-            [fi.vm.sade.oppijantunnistus.expiration :refer [create-expiration-timestamp now-timestamp to-date-string to-psql-timestamp is-valid]]))
+            [fi.vm.sade.oppijantunnistus.expiration :refer [long-to-timestamp create-expiration-timestamp now-timestamp to-date-string to-psql-timestamp is-valid]]))
 
 
 (defn ^:private add-token [valid_until email token callback_url metadata lang]
@@ -69,16 +69,18 @@
     "sv" :sv
     :en))
 
-(defn send-verification-link [email callback_url metadata any_lang template subject]
-  (let [lang (sanitize_lang any_lang)
+(defn send-verification-link [email callback_url metadata some_lang some_template some_subject some_expiration]
+  (let [lang (sanitize_lang some_lang)
         token (generate-token)
-        expires (create-expiration-timestamp)]
+        template (if (some? some_template) some_template (email-template lang))
+        subject (if (some? some_subject) some_subject (email-subjects lang))
+        expires (if (some? some_expiration) (long-to-timestamp some_expiration) (create-expiration-timestamp))]
     (if (add-token (to-psql-timestamp expires) email token callback_url metadata lang)
       (send-ryhmasahkoposti expires
                             email
                             callback_url
                             token
-                            (if (some? template) template (email-template lang))
-                            (if (some? subject) subject (email-subjects lang)) )
+                            template
+                            subject)
       (log/error "Saving token to database failed!"))
     ))

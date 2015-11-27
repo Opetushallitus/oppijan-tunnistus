@@ -11,6 +11,7 @@
 
 (def ^:private template-formatter (f/formatter "dd.MM.yyyy" (t/time-zone-for-id timezone-id)))
 
+(defn long-to-timestamp [lval] (c/from-long lval))
 (defn create-expiration-timestamp [] (t/plus (l/local-now) (t/days (-> cfg :expires-in :days))))
 (defn now-timestamp [] (l/local-now))
 

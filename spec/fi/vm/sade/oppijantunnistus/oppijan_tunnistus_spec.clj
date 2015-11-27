@@ -103,6 +103,7 @@
                                                              :email "test@email.com"
                                                              :lang "fi"
                                                              :subject "My Custom Subject"
+                                                             :expires 1448624510000
                                                              :template "### My Custom Template {{verification-link}} ###"})
                                            :content-type "application/json"})
                     body (parse-string (response :body) true)
@@ -112,7 +113,7 @@
                   (should (= 200 (:status response)))
                   (should (= "test@email.com" (-> body :email)))
                   (should (= "fi" (-> body :lang)))
-                  (should (= true (-> body :valid)))
+                  (should (= false (-> body :valid)))       ; timestamp should have expired
                   (should (= true (-> body :exists))))))
 
           (it "should fail if ryhmasahkoposti is down"
