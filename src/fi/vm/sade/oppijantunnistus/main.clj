@@ -5,17 +5,21 @@
   (:require [clojure.tools.logging :as log]
             [fi.vm.sade.oppijantunnistus.db.db-util :as db])
   (:import ch.qos.logback.access.jetty.RequestLogImpl
-           org.eclipse.jetty.server.handler.RequestLogHandler)
+           [org.eclipse.jetty.server.handler
+            HandlerCollection
+            RequestLogHandler])
   (:gen-class))
 
 (set! *warn-on-reflection* true)
 
 (defn- configure-request-log [server]
   (doto server
-    (.setHandler (doto (RequestLogHandler.)
-                   (.setRequestLog (doto (RequestLogImpl.)
-                                     (.setFileName (:logback-access cfg))
-                                     (.start)))))))
+    (.setHandler (doto (HandlerCollection.)
+                   (.addHandler (.getHandler server))
+                   (.addHandler (doto (RequestLogHandler.)
+                                  (.setRequestLog (doto (RequestLogImpl.)
+                                                    (.setFileName (:logback-access cfg))
+                                                    (.start)))))))))
 
 (defn -main [& args]
   (log/info "Using configuration: " cfg)
