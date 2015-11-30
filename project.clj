@@ -45,7 +45,8 @@
 
                  ;; Logging
                  [org.slf4j/slf4j-api "1.7.12"]
-                 [ch.qos.logback/logback-classic	"1.1.3"]
+                 [ch.qos.logback/logback-classic "1.1.3"]
+                 [ch.qos.logback/logback-access "1.1.3"]
                  [org.clojure/tools.logging "0.3.1"]
 
                  ;; Utils
@@ -73,6 +74,7 @@
                                 }}}
 
   :main fi.vm.sade.oppijantunnistus.main
+  :aot [fi.vm.sade.oppijantunnistus.main]
 
   :target-path "target/%s"
 
