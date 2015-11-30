@@ -12,13 +12,14 @@
           [javax.sql.DataSource]
           [org.postgresql.ds PGPoolingDataSource]))
 
-(def datasource (doto (new PGPoolingDataSource)
-                      (.setServerName   (-> cfg :db :servername))
-                      (.setDatabaseName (-> cfg :db :databasename))
-                      (.setUser         (-> cfg :db :username))
-                      (.setPassword     (-> cfg :db :password))
-                      (.setPortNumber   (-> cfg :db :port))
-                      (.setMaxConnections 3)))
+(when-not *compile-files*
+  (def datasource (doto (new PGPoolingDataSource)
+                    (.setServerName   (-> cfg :db :servername))
+                    (.setDatabaseName (-> cfg :db :databasename))
+                    (.setUser         (-> cfg :db :username))
+                    (.setPassword     (-> cfg :db :password))
+                    (.setPortNumber   (-> cfg :db :port))
+                    (.setMaxConnections 3))))
 
 (defn migrate [& migration-paths]
   (let [schema-name (-> cfg :db :schema)

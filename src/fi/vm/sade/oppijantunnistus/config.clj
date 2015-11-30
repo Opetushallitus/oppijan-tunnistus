@@ -3,6 +3,7 @@
             [clojure.edn :as edn]))
 
 
-(def cfg (-> (or (env :oppijantunnistus-properties) "config/reference.edn")
-             (slurp)
-             (edn/read-string)))
+(when-not *compile-files*
+  (def cfg (-> (or (env :oppijantunnistus-properties) "config/reference.edn")
+               (slurp)
+               (edn/read-string))))
