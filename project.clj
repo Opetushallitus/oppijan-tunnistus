@@ -60,7 +60,8 @@
 
   :profiles {:uberjar {:prep-tasks ["compile" "resource"]}
              :test  {:prep-tasks ["compile" "resource"]
-                     :jvm-opts ["-Doppijantunnistus.properties=target/spec.edn"]
+                     :jvm-opts ["-Doppijantunnistus.properties=target/spec.edn"
+                                "-Dlogback.access=does-not-exist.xml"]
                      :dependencies [[speclj "3.3.1"]
                                     [com.cemerick/url "0.1.1"]
                                     [ring/ring-mock "0.3.0"]
