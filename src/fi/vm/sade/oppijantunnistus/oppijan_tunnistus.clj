@@ -12,23 +12,29 @@
 
 
 (defn ^:private add-token [valid_until email token callback_url metadata lang]
-  (->> (db/exec add-secure-link! {:valid_until valid_until
-                                  :email email
-                                  :token token
-                                  :callback_url callback_url
-                                  :lang (name lang)
-                                  :metadata (if (some? metadata) (write-str metadata) nil) })))
+  (try
+    (db/exec add-secure-link! {:valid_until valid_until
+                               :email email
+                               :token token
+                               :callback_url callback_url
+                               :lang (name lang)
+                               :metadata (when (some? metadata)
+                                           (write-str metadata))})
+    (catch Exception e
+      (throw (RuntimeException.
+              (str "Saving token " token " for " email " to database failed")
+              e)))))
 
 (defn ^:private get-token [token]
-  (->> (db/exec get-secure-link {:token token}) first))
+  (first (db/exec get-secure-link {:token token})))
 
 (def ^:private email-template {:en (slurp (io/resource "email/email_en.mustache" ))
-                                       :sv (slurp (io/resource "email/email_sv.mustache" ))
-                                       :fi (slurp (io/resource "email/email_fi.mustache" ))})
+                               :sv (slurp (io/resource "email/email_sv.mustache" ))
+                               :fi (slurp (io/resource "email/email_fi.mustache" ))})
 
 (def ^:private email-subjects {:en "Studyinfo – login link"
-                                       :sv "Studieinfo – inloggningslänk"
-                                       :fi "Opintopolku – kirjautumislinkki"})
+                               :sv "Studieinfo – inloggningslänk"
+                               :fi "Opintopolku – kirjautumislinkki"})
 
 (defn retrieve-email-and-validity-with-token [token]
   (let [entry (get-token token)]
@@ -43,8 +49,8 @@
 (defn ^:private send-ryhmasahkoposti [expires email callback_url token raw_template subject]
   (let [verification_link (str callback_url token)
         template (render raw_template {:verification-link verification_link
-                                         :expires (to-date-string expires)
-                                         :submit_time (to-date-string (now-timestamp))})
+                                       :expires (to-date-string expires)
+                                       :submit_time (to-date-string (now-timestamp))})
         cas_url (-> cfg :cas :url)
         ryhmasahkoposti_params (-> cfg :ryhmasahkoposti :params)
         ryhmasahkoposti_url (-> cfg :ryhmasahkoposti :url)
@@ -54,14 +60,15 @@
                                       :isHtml true}
                               :recipient [{:email email}] })]
     (set-cas cas_url)
-    (let [response (try
-                     @(post (apply cas-params ryhmasahkoposti_params) ryhmasahkoposti_url mail_json :content-type ["application" "json"])
-                     (catch Throwable t (log/error "Sending ryhmasahkoposti failed!" t)))]
-    (if (= 200 (-> response :status :code))
-      verification_link
-      (do (log/error "Sending email failed!" response)
-          (throw (Exception. "Sending email failed!")))
-      ))))
+    (if-let [response @(post (apply cas-params ryhmasahkoposti_params)
+                             ryhmasahkoposti_url
+                             mail_json
+                             :content-type ["application" "json"])]
+      (if (= 200 (-> response :status :code))
+        verification_link
+        (throw (RuntimeException.
+                (str "Sending email failed, response " response))))
+      (throw (RuntimeException. "Sending email failed, cas request failed without exception from clj-util")))))
 
 (defn ^:private sanitize_lang [any_lang]
   (case any_lang
@@ -75,12 +82,14 @@
         template (if (some? some_template) some_template (email-template lang))
         subject (if (some? some_subject) some_subject (email-subjects lang))
         expires (if (some? some_expiration) (long-to-timestamp some_expiration) (create-expiration-timestamp))]
-    (if (add-token (to-psql-timestamp expires) email token callback_url metadata lang)
+    (try
+      (add-token (to-psql-timestamp expires) email token callback_url metadata lang)
       (send-ryhmasahkoposti expires
                             email
                             callback_url
                             token
                             template
                             subject)
-      (log/error "Saving token to database failed!"))
-    ))
+      (catch Exception e
+        (log/error "failed to send verification link" e)
+        (throw (RuntimeException. "failed to send verification link" e))))))
