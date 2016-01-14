@@ -36,6 +36,7 @@
                  [yesql "0.5.0"]
                  [org.postgresql/postgresql "9.4-1202-jdbc42"]
                  [org.flywaydb/flyway-core "3.2.1"]
+                 [hikari-cp "1.3.1" :exclusions [prismatic/schema]]
 
                  ;; E-mail
                  [de.ubercode.clostache/clostache "1.4.0"]

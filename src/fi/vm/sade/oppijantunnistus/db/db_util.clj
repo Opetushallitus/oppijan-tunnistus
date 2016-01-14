@@ -10,16 +10,14 @@
           [org.flywaydb.core.api.migration MigrationInfoProvider]
           [org.flywaydb.core.api MigrationVersion]
           [javax.sql.DataSource]
-          [org.postgresql.ds PGPoolingDataSource]))
+          [com.zaxxer.hikari HikariDataSource]))
 
 (when-not *compile-files*
-  (def datasource (doto (new PGPoolingDataSource)
-                    (.setServerName   (-> cfg :db :servername))
-                    (.setDatabaseName (-> cfg :db :databasename))
-                    (.setUser         (-> cfg :db :username))
+  (def datasource (doto (new HikariDataSource)
+                    (.setJdbcUrl (str "jdbc:postgresql://" (-> cfg :db :servername) ":" (-> cfg :db :port) "/" (-> cfg :db :databasename)))
+                    (.setUsername     (-> cfg :db :username))
                     (.setPassword     (-> cfg :db :password))
-                    (.setPortNumber   (-> cfg :db :port))
-                    (.setMaxConnections 3))))
+                    )))
 
 (defn migrate [& migration-paths]
   (let [schema-name (-> cfg :db :schema)
