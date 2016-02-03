@@ -27,7 +27,7 @@ task(zipIt, type: Zip) {
     archiveName zipFileName
 
     include("*.jar")
-    include("oph-configuration/*")
+    include("resources/oph-configuration/*")
     include("*.sh")
 
     from '.'
