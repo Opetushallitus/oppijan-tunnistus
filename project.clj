@@ -86,8 +86,8 @@
             [lein-auto "0.1.2"]
             [lein-ancient "0.6.7"]
             [lein-ring "0.8.11"]
-            [lein-resource "14.10.2"]]
-
+            [lein-resource "14.10.2"]
+            [lein-deploy-artifacts "0.1.0"]]
 
   :resource-paths ["resources" "target/generated-resources"]
 
