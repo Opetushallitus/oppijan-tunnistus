@@ -1,6 +1,4 @@
-{:cas {:url "https://itest-virkailija.oph.ware.fi"}
- :ryhmasahkoposti {:params ["https://itest-virkailija.oph.ware.fi/ryhmasahkoposti-service" "oppijantunnistus" "ophtest12#"]
-                   :url "https://itest-virkailija.oph.ware.fi/ryhmasahkoposti-service/email"}
+{:ryhmasahkoposti {:url "https://itest-virkailija.oph.ware.fi/ryhmasahkoposti-service/email/firewall"}
  :db {:schema "public"
       :servername "oppijantunnistusdb"
       :databasename "oppijantunnistusdb"
