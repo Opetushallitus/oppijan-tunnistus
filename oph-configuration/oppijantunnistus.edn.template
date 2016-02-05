@@ -1,0 +1,12 @@
+{:cas {:url "https://{{host_virkailija}}"}
+ :ryhmasahkoposti {:params ["https://{{host_virkailija}}/ryhmasahkoposti-service" "{{oppijantunnistus_cas_user}}" "{{oppijantunnistus_cas_password}}"]
+                   :url "https://{{host_virkailija}}/ryhmasahkoposti-service/email"}
+ :db {:schema "public"
+      :servername "{{oppijantunnistus_db_host}}"
+      :databasename "{{oppijantunnistus_db_name}}"
+      :username "{{oppijantunnistus_db_username}}"
+      :password "{{oppijantunnistus_db_password}}"
+      :port {{oppijantunnistus_db_port}}}
+ :expires-in { :days {{oppijantunnistus_expires_in_days}} }
+ :server {:port {{palvelu_portti}}
+          :base-url "/oppijan-tunnistus"}}
