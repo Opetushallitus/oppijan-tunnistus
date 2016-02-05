@@ -63,8 +63,9 @@
       @(http/post ryhmasahkoposti_url options (fn [{:keys [status error body headers]}]
                                                (if (= 200 status)
                                                  verification_link
-                                                 (throw (RuntimeException.
-                                                          (str "Sending email failed with status" status "and with message" error)))))))))
+                                                 (do (log/error "Sending email failed" error)
+                                                     (throw (RuntimeException.
+                                                              (str "Sending email failed with status" status "and with message"))))))))))
 
 (defn ^:private sanitize_lang [any_lang]
   (case any_lang
