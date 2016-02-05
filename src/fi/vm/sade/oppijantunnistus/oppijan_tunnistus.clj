@@ -4,7 +4,7 @@
             [fi.vm.sade.oppijantunnistus.token :refer [generate-token]]
             [clostache.parser :refer [render]]
             [clojure.java.io :as io]
-            [clj-util.cas :refer [set-cas cas-params post]]
+            [org.httpkit.client :as http]
             [clojure.data.json :refer [write-str read-str]]
             [fi.vm.sade.oppijantunnistus.config :refer [cfg]]
             [clojure.tools.logging :as log]
@@ -51,24 +51,20 @@
         template (render raw_template {:verification-link verification_link
                                        :expires (to-date-string expires)
                                        :submit_time (to-date-string (now-timestamp))})
-        cas_url (-> cfg :cas :url)
-        ryhmasahkoposti_params (-> cfg :ryhmasahkoposti :params)
         ryhmasahkoposti_url (-> cfg :ryhmasahkoposti :url)
         mail_json (write-str {:email {:from "no-reply@opintopolku.fi"
                                       :subject subject
                                       :body template
                                       :isHtml true}
                               :recipient [{:email email}] })]
-    (set-cas cas_url)
-    (if-let [response @(post (apply cas-params ryhmasahkoposti_params)
-                             ryhmasahkoposti_url
-                             mail_json
-                             :content-type ["application" "json"])]
-      (if (= 200 (-> response :status :code))
-        verification_link
-        (throw (RuntimeException.
-                (str "Sending email failed, response " response))))
-      (throw (RuntimeException. "Sending email failed, cas request failed without exception from clj-util")))))
+    (let [options {:timeout 10000
+                   :headers {"Content-Type" "application/json"}
+                   :body mail_json}]
+      @(http/post ryhmasahkoposti_url options (fn [{:keys [status error body headers]}]
+                                               (if (= 200 status)
+                                                 verification_link
+                                                 (throw (RuntimeException.
+                                                          (str "Sending email failed with status" status "and with message" error)))))))))
 
 (defn ^:private sanitize_lang [any_lang]
   (case any_lang
