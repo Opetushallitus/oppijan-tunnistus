@@ -9,18 +9,9 @@
                  ["oph-snapshots" "https://artifactory.oph.ware.fi/artifactory/oph-sade-snapshot-local"]]
   :dependencies [[org.clojure/clojure "1.7.0"]
                  [org.clojure/data.json "0.2.6"]
-                 ; CAS
-                 [oph/clj-util "0.1.0-SNAPSHOT" :exclusions [org.scala-lang/scala-reflect
-                                                             org.scala-lang.modules/scala-xml_2.11
-                                                             org.scala-lang.modules/scala-parser-combinators_2.11
-                                                             de.flapdoodle.embed/de.flapdoodle.embed.mongo
-                                                             org.json4s/json4s-jackson_2.11
-                                                             org.scala-lang/scala-compiler
-                                                             org.scalatra.scalate/scalate-core_2.11
-                                                             com.fasterxml.jackson.dataformat/jackson-dataformat-yaml]]
-
                  ;; HTTP server
                  [javax.servlet/servlet-api "2.5"]
+                 [http-kit "2.1.18"]
                  [clj-http "1.0.1"]
                  [ring "1.4.0"]
                  [ring/ring-jetty-adapter "1.4.0"]
