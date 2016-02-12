@@ -60,8 +60,8 @@
     (let [options {:timeout 10000
                    :headers {"Content-Type" "application/json"}
                    :body mail_json}]
-      @(http/post ryhmasahkoposti_url options (fn [{:keys [status error body headers]}]
-                                               (if (= 200 status)
+      @(http/post ryhmasahkoposti_url options (fn [{:keys [status error body]}]
+                                               (if (and (= 200 status) (contains? (read-str body) "id"))
                                                  verification_link
                                                  (do (log/error "Sending email failed" error)
                                                      (throw (RuntimeException.
