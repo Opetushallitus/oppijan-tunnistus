@@ -31,14 +31,16 @@
                  :responses {200 {:schema ValidityResponse
                                   :description "Returns token validity and email in case token exists"}}
                  :summary   "Verify token"
-                 (response (retrieve-email-and-validity-with-token token)))
+                 (do (log/info "Verifying token" token)
+                     (response (retrieve-email-and-validity-with-token token))))
             (POST* "/token" req
                   :responses  {200 {:schema s/Str
                                     :description "Verification email sent.
                                     Returns verification-url that is same as callback-url+token."}}
                   :body       [s_req SendRequest]
                   :summary    "Send verification email"
-                  (ok (send-verification-link (s_req :email) (s_req :url) (s_req :metadata) (s_req :lang) (s_req :template) (s_req :subject) (s_req :expires))))
+                  (do (log/info "Sending verification link to email" (s_req :email))
+                      (ok (send-verification-link (s_req :email) (s_req :url) (s_req :metadata) (s_req :lang) (s_req :template) (s_req :subject) (s_req :expires)))))
             (route/not-found "Page not found"))
 
 (defroutes* doc-routes
