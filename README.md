@@ -10,10 +10,6 @@ If needed, set logback.access property: `export JVM_OPTS=-Dlogback.access=does-n
 
 ./lein uberjar
 
-## Run tests
-
-./lein spec
-
 ## Local Postgres setup
 
 MacOS users install docker with command `brew cask install dockertoolbox`.
