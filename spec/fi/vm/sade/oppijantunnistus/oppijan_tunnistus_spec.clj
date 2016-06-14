@@ -116,13 +116,53 @@
                   (should (= false (-> body :valid)))       ; timestamp should have expired
                   (should (= true (-> body :exists))))))
 
+
+          (it "should send verification email and return tokens"
+              (let [response (client/post (make_url_from_path "/tokens")
+                                          {:body         (write-str {:url          "http://mycallback_url#"
+                                                                     :templatename "my_template"
+                                                                     :emails       ["test1@email.com", "test2@email.com", "test3@email.com"]
+                                                                     :lang         "fi"})
+                                           :content-type "application/json"})
+                    body (parse-string (response :body) true)]
+                   (should (= 200 (:status response)))
+                   (should (= "test1@email.com" (-> (get ( body :recipients ) 0) :email )))
+                   (should (= "test2@email.com" (-> (get ( body :recipients ) 1) :email )))
+                   (should (= "test3@email.com" (-> (get ( body :recipients ) 2) :email )))
+                   (should (.startsWith (-> (get ( body :recipients ) 0) :securelink ) "http://mycallback_url#" ))
+                   (should (.startsWith (-> (get ( body :recipients ) 1) :securelink ) "http://mycallback_url#" ))
+                   (should (.startsWith (-> (get ( body :recipients ) 2) :securelink ) "http://mycallback_url#" ))))
+
+          (it "should verify valid tokens"
+              (let [response (client/post (make_url_from_path "/tokens")
+                                          {:body         (write-str {:url          "#"
+                                                                     :templatename "my_template"
+                                                                     :emails       ["test1@email.com", "test2@email.com"]
+                                                                     :lang         "fi"})
+                                           :content-type "application/json"})
+                    body (parse-string (response :body) true)
+                    token1 (subs ((get ( body :recipients ) 0) :securelink) 1)
+                    token2 (subs ((get ( body :recipients ) 1) :securelink) 1)]
+                   (let [response (client/get (make_url_from_path (str "/token/" token1)))
+                         body (parse-string (response :body) true)]
+                        (should (= 200 (:status response)))
+                        (should (= "test1@email.com" (-> body :email)))
+                        (should (= "fi" (-> body :lang)))
+                        (should (= true (-> body :valid)))
+                        (should (= true (-> body :exists))))
+                   (let [response (client/get (make_url_from_path (str "/token/" token2)))
+                         body (parse-string (response :body) true)]
+                        (should (= 200 (:status response)))
+                        (should (= "test2@email.com" (-> body :email)))
+                        (should (= "fi" (-> body :lang)))
+                        (should (= true (-> body :valid)))
+                        (should (= true (-> body :exists))))))
+
           (it "should fail if ryhmasahkoposti is down"
               (enable_server false)
               (try
                 (should-throw (client/post (make_url_from_path "/token")
                                            {:body (write-str {:url "#" :email "test@email.com"})
                                             :content-type "application/json"}))
-                (finally (enable_server true))))
-
-          )
+                (finally (enable_server true)))))
 (run-specs)
