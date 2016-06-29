@@ -56,7 +56,7 @@
                   :body        [s_req TokensRequest]
                   :summary     "Send multiple verification emails"
                   (do (log/info "Sending multiple verification emails")
-                      (response {:recipients (send-verification-links (s_req :emails) (s_req :url) (s_req :metadata) (s_req :lang) (s_req :templatename) (s_req :expires))})))
+                      (response {:recipients (send-verification-links (s_req :emails) (s_req :url) (s_req :metadata) (s_req :lang) (s_req :templatename) (s_req :expires) (s_req :hakuOid))})))
             (route/not-found "Page not found"))
 
 (defroutes* doc-routes
@@ -70,4 +70,3 @@
                   (route/resources "/")
                   (context* "/api/v1" [] oppijan-tunnistus-routes)
                   (context* "/swagger" [] doc-routes)))
-

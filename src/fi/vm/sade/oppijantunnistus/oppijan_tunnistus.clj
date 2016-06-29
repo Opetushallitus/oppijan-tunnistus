@@ -76,12 +76,13 @@
                                                                   (throw (RuntimeException.
                                                                            (str "Sending email failed with status" status "and with message"))))))))))
 
-(defn ^:private send-ryhmasahkoposti-with-tokens [recipients_data callback_url template_name lang]
+(defn ^:private send-ryhmasahkoposti-with-tokens [recipients_data callback_url template_name lang haku_oid]
       (let [ryhmasahkoposti_url (-> cfg :ryhmasahkoposti :url)
             mail_json (write-str {:email      {:from          "no-reply@opintopolku.fi"
                                                :templateName  template_name
                                                :languageCode  lang
-                                               :isHtml        true}
+                                               :isHtml        true
+                                               :hakuOid       haku_oid}
                                   :recipient  (for [x recipients_data] (create-recipient (nth x 0) (nth x 1) callback_url))})]
            (let [options {:timeout 10000
                           :headers {"Content-Type" "application/json"}
@@ -120,7 +121,7 @@
 (defn ^:private create-token [email]
       [ email (generate-token)])
 
-(defn send-verification-links [emails callback_url metadata some_lang some_template_name some_expiration]
+(defn send-verification-links [emails callback_url metadata some_lang some_template_name some_expiration, haku_oid]
       (let [lang (sanitize_lang some_lang)
             template_name (if (some? some_template_name) some_template_name "default_template_name" )
             expires (if (some? some_expiration) (long-to-timestamp some_expiration) (create-expiration-timestamp))
@@ -128,7 +129,7 @@
             ]
             (try
               (doseq [x tokens] (add-token (to-psql-timestamp expires) (nth x 0) (nth x 1) callback_url metadata lang))
-              (send-ryhmasahkoposti-with-tokens tokens callback_url template_name lang )
+              (send-ryhmasahkoposti-with-tokens tokens callback_url template_name lang haku_oid)
               (catch Exception e
                 (log/error "failed to send verification links" e)
                 (throw (RuntimeException. "failed to send verification links" e))))))
