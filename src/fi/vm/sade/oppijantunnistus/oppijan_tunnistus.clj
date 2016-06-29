@@ -141,7 +141,9 @@
     expires                          :expires
     haku-oid                         :hakuOid}]
   (let [sanitized-lang (sanitize_lang lang)
-        template-name (or template-name "default_template_name")
+        template-name (if-not (clojure.string/blank? template-name)
+                        template-name
+                        "default_template_name")
         expires (if expires
                   (long-to-timestamp expires)
                   (create-expiration-timestamp))
