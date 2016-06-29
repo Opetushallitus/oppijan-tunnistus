@@ -25,6 +25,15 @@
                    (str "Saving token " token " for " email " to database failed")
                    e)))))
 
+(defn ^:private add-tokens [token-metas expires callback-url lang]
+  (doseq [meta token-metas]
+    (add-token (to-psql-timestamp expires)
+               (:email meta)
+               (:token meta)
+               callback-url
+               {"hakemusOid" (:application-oid meta)}
+               lang)))
+
 (defn ^:private get-token [token]
       (first (db/exec get-secure-link {:token token})))
 
@@ -118,18 +127,30 @@
                (log/error "failed to send verification link" e)
                (throw (RuntimeException. "failed to send verification link" e))))))
 
-(defn ^:private create-token [email]
-      [ email (generate-token)])
+(defn ^:private token-meta [[application-oid email]]
+  {:application-oid application-oid
+   :token           (generate-token)
+   :email           email})
 
-(defn send-verification-links [emails callback_url metadata some_lang some_template_name some_expiration haku_oid]
-      (let [lang (sanitize_lang some_lang)
-            template_name (if (some? some_template_name) some_template_name "default_template_name" )
-            expires (if (some? some_expiration) (long-to-timestamp some_expiration) (create-expiration-timestamp))
-            tokens (map create-token emails)
-            ]
-            (try
-              (doseq [x tokens] (add-token (to-psql-timestamp expires) (nth x 0) (nth x 1) callback_url metadata lang))
-              (send-ryhmasahkoposti-with-tokens tokens callback_url template_name lang haku_oid)
-              (catch Exception e
-                (log/error "failed to send verification links" e)
-                (throw (RuntimeException. "failed to send verification links" e))))))
+(defn send-verification-links
+  "Provided a TokensRequest, creates tokens, persists them and sends them by email"
+  [{application-oid-to-email-address :applicationOidToEmailAddress
+    callback-url                     :url
+    lang                             :lang
+    template-name                    :templatename
+    expires                          :expires
+    haku-oid                         :hakuOid}]
+  (let [sanitized-lang (sanitize_lang lang)
+        template-name (or template-name "default_template_name")
+        expires (if expires
+                  (long-to-timestamp expires)
+                  (create-expiration-timestamp))
+        token-metas (mapv token-meta application-oid-to-email-address)
+        tokens (mapv (fn [meta]
+                       [(:email meta) (:token meta)]) token-metas)]
+    (try
+      (add-tokens token-metas expires callback-url lang)
+      (send-ryhmasahkoposti-with-tokens tokens callback-url template-name lang haku-oid)
+      (catch Exception e
+        (log/error "failed to send verification links" e)
+        (throw (RuntimeException. "failed to send verification links" e))))))

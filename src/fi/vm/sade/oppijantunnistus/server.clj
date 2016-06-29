@@ -27,7 +27,7 @@
 (s/defschema TokensRequest {:url (rs/describe s/Str "Base URL for secure links.")
                             :templatename (rs/describe s/Str "Template name for email. Template with this name should exist in Viestintäpalvelu and it must have replacement with name 'securelink'")
                             :lang (rs/describe s/Str "Email language in ISO-639-1 format. E.g. 'en','fi','sv'.")
-                            :emails (rs/describe [s/Str] "List of recipient email addresses")
+                            :applicationOidToEmailAddress (rs/describe {s/Str s/Str} "Map of application oids to email addresses")
                             :hakuOid (rs/describe s/Str "hakuOid for the current token")
                             (s/optional-key :expires) (rs/describe Long "Expiration date as unix timestamp (long milliseconds).")
                             (s/optional-key :metadata) (s/conditional map? {s/Keyword s/Keyword})})
@@ -57,7 +57,7 @@
                   :body        [s_req TokensRequest]
                   :summary     "Send multiple verification emails"
                   (do (log/info "Sending multiple verification emails")
-                      (response {:recipients (send-verification-links (s_req :emails) (s_req :url) (s_req :metadata) (s_req :lang) (s_req :templatename) (s_req :expires) (s_req :hakuOid))})))
+                      (response {:recipients (send-verification-links s_req)})))
             (route/not-found "Page not found"))
 
 (defroutes* doc-routes
