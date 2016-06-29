@@ -28,6 +28,7 @@
                             :templatename (rs/describe s/Str "Template name for email. Template with this name should exist in Viestintäpalvelu and it must have replacement with name 'securelink'")
                             :lang (rs/describe s/Str "Email language in ISO-639-1 format. E.g. 'en','fi','sv'.")
                             :emails (rs/describe [s/Str] "List of recipient email addresses")
+                            :hakuOid (rs/describe [s/Str] "hakuOid for the current token")
                             (s/optional-key :expires) (rs/describe Long "Expiration date as unix timestamp (long milliseconds).")
                             (s/optional-key :metadata) (s/conditional map? {s/Keyword s/Keyword})})
 (s/defschema TokensResponse {:recipients [{:email s/Str
