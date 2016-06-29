@@ -121,7 +121,7 @@
 (defn ^:private create-token [email]
       [ email (generate-token)])
 
-(defn send-verification-links [emails callback_url metadata some_lang some_template_name some_expiration, haku_oid]
+(defn send-verification-links [emails callback_url metadata some_lang some_template_name some_expiration haku_oid]
       (let [lang (sanitize_lang some_lang)
             template_name (if (some? some_template_name) some_template_name "default_template_name" )
             expires (if (some? some_expiration) (long-to-timestamp some_expiration) (create-expiration-timestamp))
