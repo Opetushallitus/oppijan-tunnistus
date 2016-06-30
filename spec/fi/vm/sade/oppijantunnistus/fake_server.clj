@@ -26,7 +26,11 @@
                                                                     (if (not (clojure.string/blank? ((message "email") "body")))
                                                                       (-> (response {:id "facebabe"})
                                                                             (content-type "application/json;charset=utf-8"))
-                                                                      (-> (internal-server-error!) (header "Content-Type" "application/json;charset=utf-8"))))
+                                                                      (if (not (clojure.string/blank? ((message "email") "templateName")))
+                                                                        (-> (response {:id "facebabe"})
+                                                                            (content-type "application/json;charset=utf-8"))
+                                                                        (-> (internal-server-error!) (header "Content-Type" "application/json;charset=utf-8"))
+                                                                        )))
                                                       (-> (internal-server-error) (header "Content-Type" "application/json;charset=utf-8")))))
 
 (defapi fake_server
