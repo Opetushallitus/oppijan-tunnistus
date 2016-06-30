@@ -56,7 +56,7 @@
                   (should (= true (-> body :exists)))
                   (should (= "en" (-> body :lang)))
                   (should (.equals {:a "b"} (-> body :metadata))))))
-          
+
           (it "should fail when metadata is not map"
               (let [response (client/post (make_url_from_path "/token")
                                           {:body (write-str {:url "http://mycallback_url#"
@@ -121,23 +121,31 @@
               (let [response (client/post (make_url_from_path "/tokens")
                                           {:body         (write-str {:url          "http://mycallback_url#"
                                                                      :templatename "my_template"
-                                                                     :emails       ["test1@email.com", "test2@email.com", "test3@email.com"]
+                                                                     :applicationOidToEmailAddress {
+                                                                       :oid1 "test1@email.com"
+                                                                       :oid2 "test2@email.com"
+                                                                       :oid3 "test3@email.com"}
+                                                                     :hakuOid "hakuOid1"
                                                                      :lang         "fi"})
                                            :content-type "application/json"})
                     body (parse-string (response :body) true)]
                    (should (= 200 (:status response)))
-                   (should (= "test1@email.com" (-> (get ( body :recipients ) 0) :email )))
+                   (should (= "test1@email.com" (-> (get ( body :recipients ) 0) :email)))
                    (should (= "test2@email.com" (-> (get ( body :recipients ) 1) :email )))
                    (should (= "test3@email.com" (-> (get ( body :recipients ) 2) :email )))
                    (should (.startsWith (-> (get ( body :recipients ) 0) :securelink ) "http://mycallback_url#" ))
                    (should (.startsWith (-> (get ( body :recipients ) 1) :securelink ) "http://mycallback_url#" ))
-                   (should (.startsWith (-> (get ( body :recipients ) 2) :securelink ) "http://mycallback_url#" ))))
+                   (should (.startsWith (-> (get ( body :recipients ) 2) :securelink ) "http://mycallback_url#" ))
+                   ))
 
           (it "should verify valid tokens"
               (let [response (client/post (make_url_from_path "/tokens")
                                           {:body         (write-str {:url          "#"
                                                                      :templatename "my_template"
-                                                                     :emails       ["test1@email.com", "test2@email.com"]
+                                                                     :applicationOidToEmailAddress {
+                                                                       :oid1 "test1@email.com"
+                                                                       :oid2 "test2@email.com"}
+                                                                     :hakuOid "hakuOid1"
                                                                      :lang         "fi"})
                                            :content-type "application/json"})
                     body (parse-string (response :body) true)
