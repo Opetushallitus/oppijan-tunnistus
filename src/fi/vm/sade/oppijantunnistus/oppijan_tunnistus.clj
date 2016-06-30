@@ -75,7 +75,7 @@
                                               :body    template
                                               :isHtml  true}
                                   :recipient [{:email email}]})]
-           (let [options {:timeout 10000
+           (let [options {:timeout 3600000
                           :headers {"Content-Type" "application/json"}
                           :body    mail_json}]
                 @(http/post ryhmasahkoposti_url options (fn [{:keys [status error body]}]
@@ -93,7 +93,7 @@
                                                :isHtml        true
                                                :hakuOid       haku_oid}
                                   :recipient  (for [x recipients_data] (create-recipient (nth x 0) (nth x 1) callback_url))})]
-           (let [options {:timeout 10000
+           (let [options {:timeout 3600000
                           :headers {"Content-Type" "application/json"}
                           :body    mail_json}]
                 @(http/post ryhmasahkoposti_url options (fn [{:keys [status error body]}]
