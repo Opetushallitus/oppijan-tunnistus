@@ -1,6 +1,6 @@
 (defproject oppijan-tunnistus "0.1.0-SNAPSHOT"
   :description "Oppijan tunnistus"
-  :url "https://github.com/Opetushallitus/email-verification-link"
+  :url "https://github.com/Opetushallitus/oppijan-tunnistus"
   :license {:name "EUPL licence"
             :url "http://opensource.org/licenses/EUPL-1.1"}
   :deploy-repositories {"snapshots" {:url "https://artifactory.oph.ware.fi/artifactory/oph-sade-snapshot-local"}
