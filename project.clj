@@ -13,15 +13,15 @@
                  [javax.servlet/servlet-api "2.5"]
                  [http-kit "2.1.18"]
                  [clj-http "1.0.1"]
-                 [ring "1.4.0"]
-                 [ring/ring-jetty-adapter "1.4.0"]
-                 [ring/ring-servlet "1.4.0"]
+                 [ring "1.5.0"]
+                 [ring/ring-jetty-adapter "1.5.0"]
+                 [ring/ring-servlet "1.5.0"]
                  [ring/ring-json "0.4.0"]
-                 [ring/ring-core "1.4.0"]
+                 [ring/ring-core "1.5.0"]
 
                  ;; Routing
-                 [compojure "1.4.0"]
-                 [metosin/compojure-api "0.23.1"]
+                 [compojure "1.5.1"]
+                 [metosin/compojure-api "1.1.9"]
 
                  ;; SQL + migrations
                  [yesql "0.5.0"]
@@ -33,18 +33,18 @@
                  [de.ubercode.clostache/clostache "1.4.0"]
 
                  ;; Configuration
-                 [environ "1.0.0"]
+                 [environ "1.1.0"]
 
                  ;; Logging
-                 [org.slf4j/slf4j-api "1.7.12"]
-                 [ch.qos.logback/logback-classic "1.1.3"]
-                 [ch.qos.logback/logback-access "1.1.3"]
+                 [org.slf4j/slf4j-api "1.7.21"]
+                 [ch.qos.logback/logback-classic "1.1.7"]
+                 [ch.qos.logback/logback-access "1.1.7"]
                  [org.clojure/tools.logging "0.3.1"]
 
                  ;; Utils
-                 [org.clojure/tools.trace "0.7.8"]
-                 [clj-time "0.11.0"]
-                 [pandect "0.5.3"]]
+                 [org.clojure/tools.trace "0.7.9"]
+                 [clj-time "0.12.0"]
+                 [pandect "0.6.1"]]
 
   :javac-options ["-target" "1.8" "-source" "1.8" "-Xlint:-options"]
 
@@ -54,7 +54,7 @@
              :test  {:prep-tasks ["compile" "resource"]
                      :jvm-opts ["-Doppijantunnistus.properties=target/spec.edn"
                                 "-Dlogback.access=does-not-exist.xml"]
-                     :dependencies [[speclj "3.3.1"]
+                     :dependencies [[speclj "3.3.2"]
                                     [com.cemerick/url "0.1.1"]
                                     [ring/ring-mock "0.3.0"]
                                     [speclj-junit "0.0.10"]]
@@ -71,8 +71,8 @@
 
   :target-path "target/%s"
 
-  :plugins [[speclj "3.3.1"]
-            [lein-environ "1.0.0"]
+  :plugins [[speclj "3.3.2"]
+            [lein-environ "1.1.0"]
             [lein-shell "0.4.0"]
             [lein-auto "0.1.2"]
             [lein-ancient "0.6.7"]
