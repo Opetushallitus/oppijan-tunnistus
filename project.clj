@@ -20,8 +20,9 @@
                  [ring/ring-core "1.5.0"]
 
                  ;; Routing
-                 [compojure "1.5.1"]
-                 [metosin/compojure-api "1.1.9"]
+                 [compojure "1.4.0"]
+                 [metosin/compojure-api "0.23.1"]
+
 
                  ;; SQL + migrations
                  [yesql "0.5.0"]
