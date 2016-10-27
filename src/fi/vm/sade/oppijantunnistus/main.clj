@@ -22,7 +22,7 @@
                                                     (.start)))))))))
 
 (defn -main [& args]
-  (log/info "Using configuration: " (assoc-in cfg [:db :password] ""))
+  (log/info "Using configuration: " (assoc-in cfg [:db :password] "*******"))
   (log/info "Running db migrations")
   (db/migrate "db.migration")
   (log/info "Starting server")
