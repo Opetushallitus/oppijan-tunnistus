@@ -11,8 +11,8 @@
                  [org.clojure/data.json "0.2.6"]
                  ;; HTTP server
                  [javax.servlet/servlet-api "2.5"]
-                 [http-kit "2.1.18"]
-                 [clj-http "1.0.1"]
+                 [http-kit "2.2.0"]
+                 [clj-http "3.3.0"]
                  [ring "1.5.0"]
                  [ring/ring-jetty-adapter "1.5.0"]
                  [ring/ring-servlet "1.5.0"]
