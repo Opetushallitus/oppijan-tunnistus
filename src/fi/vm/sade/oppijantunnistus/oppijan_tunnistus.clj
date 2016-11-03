@@ -85,6 +85,24 @@
                                                                   (throw (RuntimeException.
                                                                            (str "Sending email failed with status" status))))))))))
 
+(defn ryhmasahkoposti-preview [callback_url template_name lang haku_oid]
+  (let [ryhmasahkoposti_url (-> cfg :ryhmasahkoposti :preview-url)
+        mail_json (write-str {:email      {:from          "no-reply@opintopolku.fi"
+                                           :templateName  template_name
+                                           :languageCode  lang
+                                           :isHtml        true
+                                           :hakuOid       haku_oid}
+                              :recipient  [(create-recipient "vastaanottaja@example.com" "exampleToken" callback_url)]})
+        options {:timeout 360000
+                   :headers {"Content-Type" "application/json"}
+                   :body    mail_json}
+          {:keys [status headers body error] :as resp} @(http/post ryhmasahkoposti_url options)]
+              (if (and (= 200 status) (.contains body "Message-ID"))
+                body
+                (do (log/error "Preview email failed with status " status ":" (if error error headers))
+                    (throw (RuntimeException.
+                             (str "Preview email failed with status " status)))))))
+
 (defn ^:private send-ryhmasahkoposti-with-tokens [recipients_data callback_url template_name lang haku_oid]
       (let [ryhmasahkoposti_url (-> cfg :ryhmasahkoposti :url)
             mail_json (write-str {:email      {:from          "no-reply@opintopolku.fi"
