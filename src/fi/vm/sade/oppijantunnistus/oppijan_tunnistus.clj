@@ -78,12 +78,12 @@
            (let [options {:timeout 3600000
                           :headers {"Content-Type" "application/json"}
                           :body    mail_json}]
-                @(http/post ryhmasahkoposti_url options (fn [{:keys [status error body]}]
+                @(http/post ryhmasahkoposti_url options (fn [{:keys [status headers error body]}]
                                                             (if (and (= 200 status) (contains? (read-str body) "id"))
                                                               verification_link
-                                                              (do (log/error "Sending email failed" error)
+                                                              (do (log/error "Sending email failed with status " status ":" (if error error headers))
                                                                   (throw (RuntimeException.
-                                                                           (str "Sending email failed with status" status "and with message"))))))))))
+                                                                           (str "Sending email failed with status" status))))))))))
 
 (defn ^:private send-ryhmasahkoposti-with-tokens [recipients_data callback_url template_name lang haku_oid]
       (let [ryhmasahkoposti_url (-> cfg :ryhmasahkoposti :url)
@@ -96,12 +96,12 @@
            (let [options {:timeout 3600000
                           :headers {"Content-Type" "application/json"}
                           :body    mail_json}]
-                @(http/post ryhmasahkoposti_url options (fn [{:keys [status error body]}]
+                @(http/post ryhmasahkoposti_url options (fn [{:keys [status headers error body]}]
                                                             (if (and (= 200 status) (contains? (read-str body) "id"))
                                                               (for [x recipients_data] (create-response (nth x 0) (nth x 1) callback_url))
-                                                              (do (log/error "Sending email failed" error)
+                                                              (do (log/error "Sending email failed with status " status ":" (if error error headers))
                                                                   (throw (RuntimeException.
-                                                                           (str "Sending email failed with status " status " and with message"))))))))))
+                                                                           (str "Sending email failed with status " status))))))))))
 
 (defn ^:private sanitize_lang [any_lang]
       (case any_lang
