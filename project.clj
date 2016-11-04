@@ -6,7 +6,8 @@
   :deploy-repositories {"snapshots" {:url "https://artifactory.oph.ware.fi/artifactory/oph-sade-snapshot-local"}
                         "releases" {:url "https://artifactory.oph.ware.fi/artifactory/oph-sade-release-local"}}
   :repositories [["oph-releases" "https://artifactory.oph.ware.fi/artifactory/oph-sade-release-local"]
-                 ["oph-snapshots" "https://artifactory.oph.ware.fi/artifactory/oph-sade-snapshot-local"]]
+                 ["oph-snapshots" "https://artifactory.oph.ware.fi/artifactory/oph-sade-snapshot-local"]
+                 ["ext-snapshots" "https://artifactory.oph.ware.fi/artifactory/ext-snapshot-local"]]
   :dependencies [[org.clojure/clojure "1.7.0"]
                  [org.clojure/data.json "0.2.6"]
                  ;; HTTP server
@@ -22,7 +23,6 @@
                  ;; Routing
                  [compojure "1.4.0"]
                  [metosin/compojure-api "0.23.1"]
-
 
                  ;; SQL + migrations
                  [yesql "0.5.0"]
@@ -58,7 +58,7 @@
                      :dependencies [[speclj "3.3.2"]
                                     [com.cemerick/url "0.1.1"]
                                     [ring/ring-mock "0.3.0"]
-                                    [speclj-junit "0.0.10"]]
+                                    [speclj-junit "0.0.11-SNAPSHOT"]]
                      :resource {:resource-paths ["config"]
                                 :target-path "target"
                                 :includes [ #".*spec.edn" ]
