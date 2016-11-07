@@ -73,7 +73,7 @@
             mail_json (write-str {:email     {:from    "no-reply@opintopolku.fi"
                                               :subject subject
                                               :body    template
-                                              :isHtml  true}
+                                              :html    true}
                                   :recipient [{:email email}]})]
            (let [options {:timeout 3600000
                           :headers {"Content-Type" "application/json"}
@@ -90,7 +90,7 @@
         mail_json (write-str {:email      {:from          "no-reply@opintopolku.fi"
                                            :templateName  template_name
                                            :languageCode  lang
-                                           :isHtml        true
+                                           :html          true
                                            :hakuOid       haku_oid}
                               :recipient  [(create-recipient "vastaanottaja@example.com" "exampleToken" callback_url)]})
         options {:timeout 360000
@@ -108,7 +108,7 @@
             mail_json (write-str {:email      {:from          "no-reply@opintopolku.fi"
                                                :templateName  template_name
                                                :languageCode  lang
-                                               :isHtml        true
+                                               :html          true
                                                :hakuOid       haku_oid}
                                   :recipient  (for [x recipients_data] (create-recipient (nth x 0) (nth x 1) callback_url))})]
            (let [options {:timeout 3600000
