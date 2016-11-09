@@ -31,7 +31,19 @@
                                                                             (content-type "application/json;charset=utf-8"))
                                                                         (-> (internal-server-error!) (header "Content-Type" "application/json;charset=utf-8"))
                                                                         )))
-                                                      (-> (internal-server-error) (header "Content-Type" "application/json;charset=utf-8")))))
+                                                      (-> (internal-server-error) (header "Content-Type" "application/json;charset=utf-8"))))
+            (POST "/ryhmasahkoposti-service/email/preview/firewall" {body :body} (if @server_on
+                                                                                  (let [message (read-str (slurp body))]
+                                                                                    (log/info "Ryhmasahkoposti Received Preview Message" message)
+                                                                                    (if (not (clojure.string/blank? ((message "email") "body")))
+                                                                                      (-> (response (str "Message-ID: EMAIL from body"))
+                                                                                          (content-type "plain/text;charset=utf-8"))
+                                                                                      (if (not (clojure.string/blank? ((message "email") "templateName")))
+                                                                                        (-> (response (str "Message-ID: EMAIL from template"))
+                                                                                            (content-type "plain/text;charset=utf-8"))
+                                                                                        (-> (internal-server-error!) (header "Content-Type" "application/json;charset=utf-8"))
+                                                                                        )))
+                                                                                  (-> (internal-server-error) (header "Content-Type" "application/json;charset=utf-8")))))
 
 (defapi fake_server
         ryhmasahkoposti_routes)
