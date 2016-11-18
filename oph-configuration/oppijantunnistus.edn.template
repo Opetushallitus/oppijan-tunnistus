@@ -1,4 +1,4 @@
-{:ryhmasahkoposti {:url "https://{{host_virkailija}}/ryhmasahkoposti-service/email/firewall"
+{:ryhmasahkoposti {:url "https://{{host_virkailija}}/ryhmasahkoposti-service/email/async/firewall"
                    :preview-url "https://{{host_virkailija}}/ryhmasahkoposti-service/email/preview/firewall"}
  :db {:schema "public"
       :servername "{{oppijantunnistus_db_host}}"
