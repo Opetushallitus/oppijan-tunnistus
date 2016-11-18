@@ -70,10 +70,11 @@
                                            :expires           (to-date-string expires)
                                            :submit_time       (to-date-string (now-timestamp))})
             ryhmasahkoposti_url (-> cfg :ryhmasahkoposti :url)
-            mail_json (write-str {:email     {:from    "no-reply@opintopolku.fi"
-                                              :subject subject
-                                              :body    template
-                                              :html    true}
+            mail_json (write-str {:email     {:from           "no-reply@opintopolku.fi"
+                                              :subject        subject
+                                              :body           template
+                                              :html           true
+                                              :callingProcess "oppijantunnistus"}
                                   :recipient [{:email email}]})]
            (let [options {:timeout 3600000
                           :headers {"Content-Type" "application/json"}
@@ -105,11 +106,13 @@
 
 (defn ^:private send-ryhmasahkoposti-with-tokens [recipients_data callback_url template_name lang haku_oid]
       (let [ryhmasahkoposti_url (-> cfg :ryhmasahkoposti :url)
-            mail_json (write-str {:email      {:from          "no-reply@opintopolku.fi"
-                                               :templateName  template_name
-                                               :languageCode  lang
-                                               :html          true
-                                               :hakuOid       haku_oid}
+            mail_json (write-str {:email      {:from           "no-reply@opintopolku.fi"
+                                               :templateName   template_name
+                                               :languageCode   lang
+                                               :html           true
+                                               :hakuOid        haku_oid
+                                               :callingProcess "oppijantunnistus"
+                                               :subject        (str template_name " " haku_oid " " lang) }
                                   :recipient  (for [x recipients_data] (create-recipient (nth x 0) (nth x 1) callback_url))})]
            (let [options {:timeout 3600000
                           :headers {"Content-Type" "application/json"}
