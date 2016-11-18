@@ -29,6 +29,7 @@
                             :lang (rs/describe s/Str "Email language in ISO-639-1 format. E.g. 'en','fi','sv'.")
                             :applicationOidToEmailAddress (rs/describe {s/Keyword s/Str} "Map of application oids to email addresses")
                             :hakuOid (rs/describe s/Str "hakuOid for the current token")
+                            :letterId (rs/describe s/Str "letter id for the letter batch for which these messages are generated for")
                             (s/optional-key :expires) (rs/describe Long "Expiration date as unix timestamp (long milliseconds).")
                             (s/optional-key :metadata) (s/conditional map? {s/Keyword s/Keyword})})
 (s/defschema TokensResponse {:recipients [{:email s/Str

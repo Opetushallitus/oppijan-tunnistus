@@ -104,13 +104,14 @@
                     (throw (RuntimeException.
                              (str "Preview email failed with status " status)))))))
 
-(defn ^:private send-ryhmasahkoposti-with-tokens [recipients_data callback_url template_name lang haku_oid]
+(defn ^:private send-ryhmasahkoposti-with-tokens [recipients_data callback_url template_name lang haku_oid letter_id]
       (let [ryhmasahkoposti_url (-> cfg :ryhmasahkoposti :async-url)
             mail_json (write-str {:email      {:from           "no-reply@opintopolku.fi"
                                                :templateName   template_name
                                                :languageCode   lang
                                                :html           true
                                                :hakuOid        haku_oid
+                                               :letterId       letter_id
                                                :callingProcess "oppijantunnistus"
                                                :subject        (str template_name " " haku_oid " " lang) }
                                   :recipient  (for [x recipients_data] (create-recipient (nth x 0) (nth x 1) callback_url))})]
@@ -160,7 +161,8 @@
     lang                             :lang
     template-name                    :templatename
     expires                          :expires
-    haku-oid                         :hakuOid}]
+    haku-oid                         :hakuOid
+    letter-id                        :letterId}]
   (let [sanitized-lang (sanitize_lang lang)
         template-name (if-not (clojure.string/blank? template-name)
                         template-name
@@ -173,7 +175,7 @@
                        [(:email meta) (:token meta)]) token-metas)]
     (try
       (add-tokens token-metas expires callback-url lang)
-      (send-ryhmasahkoposti-with-tokens tokens callback-url template-name lang haku-oid)
+      (send-ryhmasahkoposti-with-tokens tokens callback-url template-name lang haku-oid letter-id  )
       (catch Exception e
         (log/error "failed to send verification links" e)
         (throw (RuntimeException. "failed to send verification links" e))))))
