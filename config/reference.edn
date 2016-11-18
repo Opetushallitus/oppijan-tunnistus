@@ -1,4 +1,5 @@
 {:ryhmasahkoposti {:url "https://itest-virkailija.oph.ware.fi/ryhmasahkoposti-service/email/firewall"
+                   :async-url "https://itest-virkailija.oph.ware.fi/ryhmasahkoposti-service/email/async/firewall"
                    :preview-url "https://itest-virkailija.oph.ware.fi/ryhmasahkoposti-service/email/preview/firewall"}
  :db {:schema "public"
       :servername "oppijantunnistusdb"
