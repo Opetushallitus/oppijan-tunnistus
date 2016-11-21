@@ -9,10 +9,11 @@
             [clojure.data.json :refer [write-str read-str]]
             [schema.core :as s]
             [cemerick.url :refer [url]]
-            [ring.adapter.jetty :refer [run-jetty]]))
+            [ring.adapter.jetty :refer [run-jetty]]
+            [fi.vm.sade.oppijantunnistus.url-helper :as url-helper]))
 
 (def port
-  (-> (url (-> cfg :ryhmasahkoposti :url))
+  (-> (url (:host-virkailija cfg))
       (get :port)))
 
 (def ^:private server_on (atom true))
@@ -57,7 +58,8 @@
 (defonce ^:dynamic *fake_app* (atom nil))
 
 (defn start-fake-app []
-  (log/info "Starting fake ryhmasahkoposti in URL" (-> cfg :ryhmasahkoposti :url))
+  (log/info "Starting fake ryhmasahkoposti in URL"
+    (url-helper/url "ryhmasahkoposti-service.email.firewall"))
   (if (not (nil? @*fake_app*))
     (.stop @*fake_app*))
   (reset! *fake_app* (run-jetty fake_server {:port port :join? false} )))
