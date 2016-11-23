@@ -29,6 +29,7 @@
                             :lang (rs/describe s/Str "Email language in ISO-639-1 format. E.g. 'en','fi','sv'.")
                             :applicationOidToEmailAddress (rs/describe {s/Keyword s/Str} "Map of application oids to email addresses")
                             :hakuOid (rs/describe s/Str "hakuOid for the current token")
+                            :letterId (rs/describe s/Str "letter id for the letter batch for which these messages are generated for")
                             (s/optional-key :expires) (rs/describe Long "Expiration date as unix timestamp (long milliseconds).")
                             (s/optional-key :metadata) (s/conditional map? {s/Keyword s/Keyword})})
 (s/defschema TokensResponse {:recipients [{:email s/Str
@@ -43,13 +44,23 @@
                  (do (log/info "Verifying token" token)
                      (response (retrieve-email-and-validity-with-token token))))
             (POST* "/token" req
-                  :responses  {200 {:schema s/Str
+                   :responses  {200 {:schema s/Str
                                     :description "Verification email sent.
                                     Returns verification-url that is same as callback-url+token."}}
                   :body       [s_req SendRequest]
                   :summary    "Send verification email"
                   (do (log/info "Sending verification link to email" (s_req :email))
                       (ok (send-verification-link (s_req :email) (s_req :url) (s_req :metadata) (s_req :lang) (s_req :template) (s_req :subject) (s_req :expires)))))
+            (GET* "/preview/haku/:haku-oid/template/:template-name/lang/:lang" [template-name haku-oid lang :as req]
+                   :path-params [template-name :- s/Str haku-oid :- s/Str lang :- s/Str]
+                   :query-params [callback-url :- s/Str]
+                   :summary    "Preview verification email"
+                   (do (log/info "Preview verification link email" (:params  req))
+                       (let [email (ryhmasahkoposti-preview callback-url template-name lang haku-oid)]
+                         {:status 200
+                          :headers {"Content-Type" "message/rfc822; charset=UTF-8"
+                                    "Content-Disposition" (str "inline; filename=\"example-" template-name "-" lang "-" haku-oid ".eml\"")}
+                          :body email})))
             (POST* "/tokens" req
                   :responses  {200 {:schema TokensResponse
                                     :description "Sends multiple verification emails using given template.

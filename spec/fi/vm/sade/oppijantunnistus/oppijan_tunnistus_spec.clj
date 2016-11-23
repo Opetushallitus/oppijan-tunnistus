@@ -138,6 +138,14 @@
                    (should (.startsWith (-> (get ( body :recipients ) 2) :securelink ) "http://mycallback_url#" ))
                    ))
 
+          (it "should return verification email preview"
+              (let [response (client/get (make_url_from_path "/preview/haku/hakuOid1/template/my_template/lang/fi")
+                                          {:query-params {:callback-url          "http://mycallback_url#"}})
+                    body (response :body)]
+                (should= 200 (:status response))
+                (should-contain "EMAIL from template" body)
+                ))
+
           (it "should verify valid tokens"
               (let [response (client/post (make_url_from_path "/tokens")
                                           {:body         (write-str {:url          "#"
