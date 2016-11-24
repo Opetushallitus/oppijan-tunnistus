@@ -105,7 +105,7 @@
                              (str "Preview email failed with status " status)))))))
 
 (defn ^:private send-ryhmasahkoposti-with-tokens [recipients_data callback_url template_name lang haku_oid letter_id]
-      (let [ryhmasahkoposti_url (url "ryhmasahkoposti-service.email.async.firewall"l)
+      (let [ryhmasahkoposti_url (url "ryhmasahkoposti-service.email.async.firewall")
             mail_json (write-str {:email      {:from           "no-reply@opintopolku.fi"
                                                :templateName   template_name
                                                :languageCode   lang
