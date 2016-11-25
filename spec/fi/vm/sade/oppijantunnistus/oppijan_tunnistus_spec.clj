@@ -126,6 +126,7 @@
                                                                        :oid2 "test2@email.com"
                                                                        :oid3 "test3@email.com"}
                                                                      :hakuOid "hakuOid1"
+                                                                     :letterId "letterId"
                                                                      :lang         "fi"})
                                            :content-type "application/json"})
                     body (parse-string (response :body) true)]
@@ -153,6 +154,7 @@
                                                                      :applicationOidToEmailAddress {
                                                                        :oid1 "test1@email.com"
                                                                        :oid2 "test2@email.com"}
+                                                                     :letterId "letterId"
                                                                      :hakuOid "hakuOid1"
                                                                      :lang         "fi"})
                                            :content-type "application/json"})

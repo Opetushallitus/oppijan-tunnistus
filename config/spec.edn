@@ -1,5 +1,5 @@
 {:ryhmasahkoposti {:url "http://localhost:{{fakeServerPort}}/ryhmasahkoposti-service/email/firewall"
-                   :async-url "https://localhost:{{fakeServerPort}}/ryhmasahkoposti-service/email/async/firewall"
+                   :async-url "http://localhost:{{fakeServerPort}}/ryhmasahkoposti-service/email/async/firewall"
                    :preview-url "http://localhost:{{fakeServerPort}}/ryhmasahkoposti-service/email/preview/firewall"}
  :db {:schema "public"
       :servername "oppijantunnistusdb"

@@ -18,20 +18,26 @@
 (def ^:private server_on (atom true))
 
 (defn enable_server [enable?] (reset! server_on enable?))
+
+(defn ^:private fake-email-sender [body]
+  (if @server_on
+    (let [message (read-str (slurp body))]
+      (log/info "Ryhmasahkoposti Received Message" message)
+      (if (not (clojure.string/blank? ((message "email") "body")))
+        (-> (response {:id "facebabe"})
+            (content-type "application/json;charset=utf-8"))
+        (if (not (clojure.string/blank? ((message "email") "templateName")))
+          (-> (response {:id "facebabe"})
+              (content-type "application/json;charset=utf-8"))
+          (-> (internal-server-error!) (header "Content-Type" "application/json;charset=utf-8"))
+          )))
+    (-> (internal-server-error) (header "Content-Type" "application/json;charset=utf-8"))))
+
 ;write-str {:id 3773}
 (defroutes* ryhmasahkoposti_routes
-            (POST "/ryhmasahkoposti-service/email/firewall" {body :body} (if @server_on
-                                                                  (let [message (read-str (slurp body))]
-                                                                    (log/info "Ryhmasahkoposti Received Message" message)
-                                                                    (if (not (clojure.string/blank? ((message "email") "body")))
-                                                                      (-> (response {:id "facebabe"})
-                                                                            (content-type "application/json;charset=utf-8"))
-                                                                      (if (not (clojure.string/blank? ((message "email") "templateName")))
-                                                                        (-> (response {:id "facebabe"})
-                                                                            (content-type "application/json;charset=utf-8"))
-                                                                        (-> (internal-server-error!) (header "Content-Type" "application/json;charset=utf-8"))
-                                                                        )))
-                                                      (-> (internal-server-error) (header "Content-Type" "application/json;charset=utf-8"))))
+
+            (POST "/ryhmasahkoposti-service/email/firewall" {body :body} (fake-email-sender body))
+            (POST "/ryhmasahkoposti-service/email/async/firewall" {body :body} (fake-email-sender body))
             (POST "/ryhmasahkoposti-service/email/preview/firewall" {body :body} (if @server_on
                                                                                   (let [message (read-str (slurp body))]
                                                                                     (log/info "Ryhmasahkoposti Received Preview Message" message)
