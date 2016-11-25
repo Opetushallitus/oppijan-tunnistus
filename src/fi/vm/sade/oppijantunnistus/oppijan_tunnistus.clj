@@ -78,13 +78,13 @@
                                   :recipient [{:email email}]})]
            (let [options {:timeout 3600000
                           :headers {"Content-Type" "application/json"}
-                          :body    mail_json}]
-                @(http/post ryhmasahkoposti_url options (fn [{:keys [status headers error body]}]
-                                                            (if (and (= 200 status) (contains? (read-str body) "id"))
-                                                              verification_link
-                                                              (do (log/error "Sending email failed with status " status ":" (if error error headers))
-                                                                  (throw (RuntimeException.
-                                                                           (str "Sending email failed with status" status))))))))))
+                          :body    mail_json}
+                 {:keys [status headers error body]} @(http/post ryhmasahkoposti_url options)]
+                      (if (and (= 200 status) (contains? (read-str body) "id"))
+                        verification_link
+                        (do (log/error "Sending email failed with status " status ":" (if error error headers))
+                            (throw (RuntimeException.
+                                     (str "Sending email failed with status " status))))))))
 
 (defn ryhmasahkoposti-preview [callback_url template_name lang haku_oid]
   (let [ryhmasahkoposti_url (-> cfg :ryhmasahkoposti :preview-url)
@@ -97,7 +97,7 @@
         options {:timeout 360000
                    :headers {"Content-Type" "application/json"}
                    :body    mail_json}
-          {:keys [status headers body error] :as resp} @(http/post ryhmasahkoposti_url options)]
+        {:keys [status headers body error]} @(http/post ryhmasahkoposti_url options)]
               (if (and (= 200 status) (.contains body "Message-ID"))
                 body
                 (do (log/error "Preview email failed with status " status ":" (if error error headers))
@@ -117,13 +117,14 @@
                                   :recipient  (for [x recipients_data] (create-recipient (nth x 0) (nth x 1) callback_url))})]
            (let [options {:timeout 3600000
                           :headers {"Content-Type" "application/json"}
-                          :body    mail_json}]
-                @(http/post ryhmasahkoposti_url options (fn [{:keys [status headers error body]}]
-                                                            (if (and (= 200 status) (contains? (read-str body) "id"))
-                                                              (for [x recipients_data] (create-response (nth x 0) (nth x 1) callback_url))
-                                                              (do (log/error "Sending email failed with status " status ":" (if error error headers))
-                                                                  (throw (RuntimeException.
-                                                                           (str "Sending email failed with status " status))))))))))
+                          :body    mail_json}
+                 {:keys [status headers error body]} @(http/post ryhmasahkoposti_url options)]
+                  (log/info recipients_data body)
+                  (if (and (= 200 status) (contains? (read-str body) "id"))
+                    (for [x recipients_data] (create-response (nth x 0) (nth x 1) callback_url))
+                    (do (log/error "Sending email failed with status " status ":" (if error error headers))
+                        (throw (RuntimeException.
+                                 (str "Sending email failed with status " status))))))))
 
 (defn ^:private sanitize_lang [any_lang]
       (case any_lang

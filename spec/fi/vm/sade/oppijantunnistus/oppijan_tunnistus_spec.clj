@@ -179,8 +179,12 @@
           (it "should fail if ryhmasahkoposti is down"
               (enable_server false)
               (try
-                (should-throw (client/post (make_url_from_path "/token")
-                                           {:body (write-str {:url "#" :email "test@email.com"})
-                                            :content-type "application/json"}))
+                (client/post (make_url_from_path "/token")
+                             {:body (write-str {:url "#" :email "test@email.com"})
+                              :content-type "application/json"})
+                (throw (RuntimeException. "No exception thrown"))
+                (catch clojure.lang.ExceptionInfo e
+                  (should= 500 (:status (ex-data e)))
+                  (should= "{\"type\":\"unknown-exception\",\"class\":\"java.lang.RuntimeException\"}" (:body (ex-data e))))
                 (finally (enable_server true)))))
 (run-specs)
