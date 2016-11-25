@@ -26,9 +26,9 @@
           (it "doesn't fail on unknown token query"
               (let [response (client/get (make_url_from_path "/token/smoken"))
                     json (parse-string (response :body) true)]
-                (should (= 200 (:status response)))
-                (should (= false (json :valid )))
-                (should (= false (json :exists)))))
+                (should= 200 (:status response))
+                (should= false (json :valid ))
+                (should= false (json :exists))))
 
           (it "should fail on missing email"
               (let [response (client/post (make_url_from_path "/token")
@@ -36,7 +36,7 @@
                                            :content-type "application/json"
                                            :throw-exceptions false})
                     body (parse-string (response :body) true)]
-                (should (= 400 (:status response)))))
+                (should= 400 (:status response))))
 
 
           (it "should return metadata in validation query"
@@ -50,11 +50,11 @@
                     token (subs body 1)]
                 (let [response (client/get (make_url_from_path (str "/token/" token)))
                       body (parse-string (response :body) true)]
-                  (should (= 200 (:status response)))
-                  (should (= "test@email.com" (-> body :email)))
-                  (should (= true (-> body :valid)))
-                  (should (= true (-> body :exists)))
-                  (should (= "en" (-> body :lang)))
+                  (should= 200 (:status response))
+                  (should= "test@email.com" (-> body :email))
+                  (should= true (-> body :valid))
+                  (should= true (-> body :exists))
+                  (should= "en" (-> body :lang))
                   (should (.equals {:a "b"} (-> body :metadata))))))
 
           (it "should fail when metadata is not map"
@@ -65,7 +65,7 @@
                                            :content-type "application/json"
                                            :throw-exceptions false})
                     body (parse-string (response :body) true)]
-                (should (= 400 (:status response)))))
+                (should= 400 (:status response))))
 
           (it "should allow map metadata"
               (let [response (client/post (make_url_from_path "/token")
@@ -75,7 +75,7 @@
                                                              :metadata {:some :key}})
                                            :content-type "application/json" })
                     body (parse-string (response :body) true)]
-                (should (= 200 (:status response)))))
+                (should= 200 (:status response))))
 
           (it "should not allow nested map metadata"
               (let [response (client/post (make_url_from_path "/token")
@@ -85,7 +85,7 @@
                                            :content-type "application/json"
                                            :throw-exceptions false})
                     body (parse-string (response :body) true)]
-                (should (= 400 (:status response)))))
+                (should= 400 (:status response))))
 
           (it "should send verification email and return token"
               (let [response (client/post (make_url_from_path "/token")
@@ -94,7 +94,7 @@
                                                              :lang "fi"})
                                            :content-type "application/json" })
                     body (parse-string (response :body) true)]
-                (should (= 200 (:status response)))
+                (should= 200 (:status response))
                 (should (.startsWith body "http://mycallback_url#"))))
 
           (it "should verify valid token"
@@ -110,11 +110,11 @@
                     token (subs body 1)]
                 (let [response (client/get (make_url_from_path (str "/token/" token)))
                       body (parse-string (response :body) true)]
-                  (should (= 200 (:status response)))
-                  (should (= "test@email.com" (-> body :email)))
-                  (should (= "fi" (-> body :lang)))
-                  (should (= false (-> body :valid)))       ; timestamp should have expired
-                  (should (= true (-> body :exists))))))
+                  (should= 200 (:status response))
+                  (should= "test@email.com" (-> body :email))
+                  (should= "fi" (-> body :lang))
+                  (should= false (-> body :valid))       ; timestamp should have expired
+                  (should= true (-> body :exists)))))
 
 
           (it "should send verification email and return tokens"
@@ -130,10 +130,10 @@
                                                                      :lang         "fi"})
                                            :content-type "application/json"})
                     body (parse-string (response :body) true)]
-                   (should (= 200 (:status response)))
-                   (should (= "test1@email.com" (-> (get ( body :recipients ) 0) :email)))
-                   (should (= "test2@email.com" (-> (get ( body :recipients ) 1) :email )))
-                   (should (= "test3@email.com" (-> (get ( body :recipients ) 2) :email )))
+                   (should= 200 (:status response))
+                   (should= "test1@email.com" (-> (get ( body :recipients ) 0) :email))
+                   (should= "test2@email.com" (-> (get ( body :recipients ) 1) :email ))
+                   (should= "test3@email.com" (-> (get ( body :recipients ) 2) :email ))
                    (should (.startsWith (-> (get ( body :recipients ) 0) :securelink ) "http://mycallback_url#" ))
                    (should (.startsWith (-> (get ( body :recipients ) 1) :securelink ) "http://mycallback_url#" ))
                    (should (.startsWith (-> (get ( body :recipients ) 2) :securelink ) "http://mycallback_url#" ))
@@ -163,18 +163,18 @@
                     token2 (subs ((get ( body :recipients ) 1) :securelink) 1)]
                    (let [response (client/get (make_url_from_path (str "/token/" token1)))
                          body (parse-string (response :body) true)]
-                        (should (= 200 (:status response)))
-                        (should (= "test1@email.com" (-> body :email)))
-                        (should (= "fi" (-> body :lang)))
-                        (should (= true (-> body :valid)))
-                        (should (= true (-> body :exists))))
+                        (should= 200 (:status response))
+                        (should= "test1@email.com" (-> body :email))
+                        (should= "fi" (-> body :lang))
+                        (should= true (-> body :valid))
+                        (should= true (-> body :exists)))
                    (let [response (client/get (make_url_from_path (str "/token/" token2)))
                          body (parse-string (response :body) true)]
-                        (should (= 200 (:status response)))
-                        (should (= "test2@email.com" (-> body :email)))
-                        (should (= "fi" (-> body :lang)))
-                        (should (= true (-> body :valid)))
-                        (should (= true (-> body :exists))))))
+                        (should= 200 (:status response))
+                        (should= "test2@email.com" (-> body :email))
+                        (should= "fi" (-> body :lang))
+                        (should= true (-> body :valid))
+                        (should= true (-> body :exists)))))
 
           (it "should fail if ryhmasahkoposti is down"
               (enable_server false)
