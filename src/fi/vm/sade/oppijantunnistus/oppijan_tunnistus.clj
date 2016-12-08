@@ -6,9 +6,9 @@
       [clojure.java.io :as io]
       [org.httpkit.client :as http]
       [clojure.data.json :refer [write-str read-str]]
-      [fi.vm.sade.oppijantunnistus.config :refer [cfg]]
       [clojure.tools.logging :as log]
-      [fi.vm.sade.oppijantunnistus.expiration :refer [long-to-timestamp create-expiration-timestamp now-timestamp to-date-string to-psql-timestamp is-valid]]))
+      [fi.vm.sade.oppijantunnistus.expiration :refer [long-to-timestamp create-expiration-timestamp now-timestamp to-date-string to-psql-timestamp is-valid]]
+      [fi.vm.sade.oppijantunnistus.url-helper :refer [url]]))
 
 
 (defn ^:private add-token [valid_until email token callback_url metadata lang]
@@ -69,7 +69,7 @@
             template (render raw_template {:verification-link verification_link
                                            :expires           (to-date-string expires)
                                            :submit_time       (to-date-string (now-timestamp))})
-            ryhmasahkoposti_url (-> cfg :ryhmasahkoposti :url)
+            ryhmasahkoposti_url (url "ryhmasahkoposti-service.email.firewall")
             mail_json (write-str {:email     {:from           "no-reply@opintopolku.fi"
                                               :subject        subject
                                               :body           template
@@ -87,7 +87,7 @@
                                      (str "Sending email failed with status " status))))))))
 
 (defn ryhmasahkoposti-preview [callback_url template_name lang haku_oid]
-  (let [ryhmasahkoposti_url (-> cfg :ryhmasahkoposti :preview-url)
+  (let [ryhmasahkoposti_url (url "ryhmasahkoposti-service.email.preview.firewall")
         mail_json (write-str {:email      {:from          "no-reply@opintopolku.fi"
                                            :templateName  template_name
                                            :languageCode  lang
@@ -105,7 +105,7 @@
                              (str "Preview email failed with status " status)))))))
 
 (defn ^:private send-ryhmasahkoposti-with-tokens [recipients_data callback_url template_name lang haku_oid letter_id]
-      (let [ryhmasahkoposti_url (-> cfg :ryhmasahkoposti :async-url)
+      (let [ryhmasahkoposti_url (url "ryhmasahkoposti-service.email.async.firewall")
             mail_json (write-str {:email      {:from           "no-reply@opintopolku.fi"
                                                :templateName   template_name
                                                :languageCode   lang

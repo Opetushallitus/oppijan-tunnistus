@@ -1,6 +1,4 @@
-{:ryhmasahkoposti {:url "http://localhost:{{fakeServerPort}}/ryhmasahkoposti-service/email/firewall"
-                   :async-url "http://localhost:{{fakeServerPort}}/ryhmasahkoposti-service/email/async/firewall"
-                   :preview-url "http://localhost:{{fakeServerPort}}/ryhmasahkoposti-service/email/preview/firewall"}
+{:host-virkailija "http://localhost:{{fakeServerPort}}"
  :db {:schema "public"
       :servername "oppijantunnistusdb"
       :databasename "oppijantunnistusdb"
