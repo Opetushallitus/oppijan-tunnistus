@@ -23,7 +23,7 @@
 (defn ^:private fake-email-sender [body headers]
   (log/info "headers" headers)
   (if (and @server_on (and (contains? headers "clientsubsystemcode")
-                           (contains? headers "callerid")))
+                           (contains? headers "caller-id")))
     (let [message (read-str (slurp body))]
       (log/info "Ryhmasahkoposti Received Message" message)
       (if (not (clojure.string/blank? ((message "email") "body")))
@@ -43,7 +43,7 @@
             (POST "/ryhmasahkoposti-service/email/async/firewall" {:keys [headers params body] :as request} (fake-email-sender body headers))
             (POST "/ryhmasahkoposti-service/email/preview/firewall" {:keys [headers params body] :as request}
               (if (and @server_on (and (contains? headers "clientsubsystemcode")
-                                       (contains? headers "callerid")))
+                                       (contains? headers "caller-id")))
                 (let [message (read-str (slurp body))]
                   (log/info "Ryhmasahkoposti Received Preview Message" message)
                   (if (not (clojure.string/blank? ((message "email") "body")))

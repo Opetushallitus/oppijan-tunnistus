@@ -82,7 +82,7 @@
                           :headers {
                                     "Content-Type" "application/json"
                                     "ClientSubSystemCode" (props :clientSubSystemCode)
-                                    "CallerId" (props :callerId)}
+                                    "Caller-Id" (props :callerId)}
                           :body    mail_json}
                  {:keys [status headers error body]} @(http/post ryhmasahkoposti_url options)]
                       (if (and (= 200 status) (contains? (read-str body) "id"))
@@ -103,7 +103,7 @@
                    :headers {
                              "Content-Type" "application/json"
                              "ClientSubSystemCode" (props :clientSubSystemCode)
-                             "CallerId" (props :callerId)}
+                             "Caller-Id" (props :callerId)}
                    :body    mail_json}
         {:keys [status headers body error]} @(http/post ryhmasahkoposti_url options)]
               (if (and (= 200 status) (.contains body "Message-ID"))
@@ -127,7 +127,7 @@
                           :headers {
                                     "Content-Type" "application/json"
                                     "ClientSubSystemCode" (props :clientSubSystemCode)
-                                    "CallerId" (props :callerId)}
+                                    "Caller-Id" (props :callerId)}
                           :body    mail_json}
                  {:keys [status headers error body]} @(http/post ryhmasahkoposti_url options)]
                   (log/info recipients_data body)
