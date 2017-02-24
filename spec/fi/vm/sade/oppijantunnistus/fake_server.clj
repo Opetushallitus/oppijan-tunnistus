@@ -20,8 +20,10 @@
 
 (defn enable_server [enable?] (reset! server_on enable?))
 
-(defn ^:private fake-email-sender [body]
-  (if @server_on
+(defn ^:private fake-email-sender [body headers]
+  (log/info "headers" headers)
+  (if (and @server_on (and (contains? headers "clientsubsystemcode")
+                           (contains? headers "callerid")))
     (let [message (read-str (slurp body))]
       (log/info "Ryhmasahkoposti Received Message" message)
       (if (not (clojure.string/blank? ((message "email") "body")))
@@ -37,20 +39,22 @@
 ;write-str {:id 3773}
 (defroutes* ryhmasahkoposti_routes
 
-            (POST "/ryhmasahkoposti-service/email/firewall" {body :body} (fake-email-sender body))
-            (POST "/ryhmasahkoposti-service/email/async/firewall" {body :body} (fake-email-sender body))
-            (POST "/ryhmasahkoposti-service/email/preview/firewall" {body :body} (if @server_on
-                                                                                  (let [message (read-str (slurp body))]
-                                                                                    (log/info "Ryhmasahkoposti Received Preview Message" message)
-                                                                                    (if (not (clojure.string/blank? ((message "email") "body")))
-                                                                                      (-> (response (str "Message-ID: EMAIL from body"))
-                                                                                          (content-type "plain/text;charset=utf-8"))
-                                                                                      (if (not (clojure.string/blank? ((message "email") "templateName")))
-                                                                                        (-> (response (str "Message-ID: EMAIL from template"))
-                                                                                            (content-type "plain/text;charset=utf-8"))
-                                                                                        (-> (internal-server-error!) (header "Content-Type" "application/json;charset=utf-8"))
-                                                                                        )))
-                                                                                  (-> (internal-server-error) (header "Content-Type" "application/json;charset=utf-8")))))
+            (POST "/ryhmasahkoposti-service/email/firewall" {:keys [headers params body] :as request} (fake-email-sender body headers))
+            (POST "/ryhmasahkoposti-service/email/async/firewall" {:keys [headers params body] :as request} (fake-email-sender body headers))
+            (POST "/ryhmasahkoposti-service/email/preview/firewall" {:keys [headers params body] :as request}
+              (if (and @server_on (and (contains? headers "clientsubsystemcode")
+                                       (contains? headers "callerid")))
+                (let [message (read-str (slurp body))]
+                  (log/info "Ryhmasahkoposti Received Preview Message" message)
+                  (if (not (clojure.string/blank? ((message "email") "body")))
+                    (-> (response (str "Message-ID: EMAIL from body"))
+                        (content-type "plain/text;charset=utf-8"))
+                    (if (not (clojure.string/blank? ((message "email") "templateName")))
+                      (-> (response (str "Message-ID: EMAIL from template"))
+                          (content-type "plain/text;charset=utf-8"))
+                      (-> (internal-server-error!) (header "Content-Type" "application/json;charset=utf-8"))
+                      )))
+                (-> (internal-server-error) (header "Content-Type" "application/json;charset=utf-8")))))
 
 (defapi fake_server
         ryhmasahkoposti_routes)

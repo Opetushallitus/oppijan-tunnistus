@@ -6,9 +6,11 @@
               [clojure.data.json :refer [write-str]]
               [cheshire.core :refer [parse-string]]
               [clj-http.client :as client]
+              [propertea.core :refer (read-properties)]
               [ring.adapter.jetty :refer [run-jetty]]
               [fi.vm.sade.oppijantunnistus.db.db-util :as db]))
 
+(def props (read-properties "resources/oppijan-tunnistus.properties"))
 (def oppijan_port (+ 10 port))
 (defn make_url_from_path [path]
   (str "http://localhost:" oppijan_port "/oppijan-tunnistus/api/v1" path))
@@ -22,6 +24,12 @@
 
           (after-all
             (stop-fake-app))
+
+          (it "properties should contain callerId"
+              (should (contains? props :callerId)))
+
+          (it "properties should contain clientSubSystemCode"
+              (should (contains? props :clientSubSystemCode)))
 
           (it "doesn't fail on unknown token query"
               (let [response (client/get (make_url_from_path "/token/smoken"))

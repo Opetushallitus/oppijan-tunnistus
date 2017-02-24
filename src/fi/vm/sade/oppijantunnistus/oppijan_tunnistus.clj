@@ -81,7 +81,7 @@
            (let [options {:timeout 3600000
                           :headers {
                                     "Content-Type" "application/json"
-                                    "ClientSubSystemCode" (props :clientSubsystemCode)
+                                    "ClientSubSystemCode" (props :clientSubSystemCode)
                                     "CallerId" (props :callerId)}
                           :body    mail_json}
                  {:keys [status headers error body]} @(http/post ryhmasahkoposti_url options)]
@@ -102,7 +102,7 @@
         options {:timeout 360000
                    :headers {
                              "Content-Type" "application/json"
-                             "ClientSubSystemCode" (props :clientSubsystemCode)
+                             "ClientSubSystemCode" (props :clientSubSystemCode)
                              "CallerId" (props :callerId)}
                    :body    mail_json}
         {:keys [status headers body error]} @(http/post ryhmasahkoposti_url options)]
@@ -126,7 +126,7 @@
            (let [options {:timeout 3600000
                           :headers {
                                     "Content-Type" "application/json"
-                                    "ClientSubSystemCode" (props :clientSubsystemCode)
+                                    "ClientSubSystemCode" (props :clientSubSystemCode)
                                     "CallerId" (props :callerId)}
                           :body    mail_json}
                  {:keys [status headers error body]} @(http/post ryhmasahkoposti_url options)]
