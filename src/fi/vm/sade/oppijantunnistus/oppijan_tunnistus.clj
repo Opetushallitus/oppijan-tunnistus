@@ -81,6 +81,8 @@
            (let [options {:timeout 3600000
                           :headers {
                                     "Content-Type" "application/json"
+                                    "Cookie" "CSRF=CSRF"
+                                    "CSRF" "CSRF"
                                     "ClientSubSystemCode" (props :clientSubSystemCode)
                                     "Caller-Id" (props :callerId)}
                           :body    mail_json}
@@ -102,6 +104,8 @@
         options {:timeout 360000
                    :headers {
                              "Content-Type" "application/json"
+                             "Cookie" "CSRF=CSRF"
+                             "CSRF" "CSRF"
                              "ClientSubSystemCode" (props :clientSubSystemCode)
                              "Caller-Id" (props :callerId)}
                    :body    mail_json}
@@ -125,6 +129,8 @@
                                   :recipient  (for [x recipients_data] (create-recipient (nth x 0) (nth x 1) callback_url))})]
            (let [options {:timeout 3600000
                           :headers {
+                                    "Cookie" "CSRF=CSRF"
+                                    "CSRF" "CSRF"
                                     "Content-Type" "application/json"
                                     "ClientSubSystemCode" (props :clientSubSystemCode)
                                     "Caller-Id" (props :callerId)}
