@@ -7,11 +7,10 @@
       [org.httpkit.client :as http]
       [clojure.data.json :refer [write-str read-str]]
       [clojure.tools.logging :as log]
-      [propertea.core :refer (read-properties)]
       [fi.vm.sade.oppijantunnistus.expiration :refer [long-to-timestamp create-expiration-timestamp now-timestamp to-date-string to-psql-timestamp is-valid]]
       [fi.vm.sade.oppijantunnistus.url-helper :refer [url]]))
 
-(def props (read-properties "resources/oppijan-tunnistus.properties"))
+(def ^:private client-id "oppijan-tunnistus")
 
 (defn ^:private add-token [valid_until email token callback_url metadata lang]
       (try
@@ -83,8 +82,8 @@
                                     "Content-Type" "application/json"
                                     "Cookie" "CSRF=CSRF"
                                     "CSRF" "CSRF"
-                                    "ClientSubSystemCode" (props :clientSubSystemCode)
-                                    "Caller-Id" (props :callerId)}
+                                    "ClientSubSystemCode" client-id
+                                    "Caller-Id" client-id}
                           :body    mail_json}
                  {:keys [status headers error body]} @(http/post ryhmasahkoposti_url options)]
                       (if (and (= 200 status) (contains? (read-str body) "id"))
@@ -106,8 +105,8 @@
                              "Content-Type" "application/json"
                              "Cookie" "CSRF=CSRF"
                              "CSRF" "CSRF"
-                             "ClientSubSystemCode" (props :clientSubSystemCode)
-                             "Caller-Id" (props :callerId)}
+                             "ClientSubSystemCode" client-id
+                             "Caller-Id" client-id}
                    :body    mail_json}
         {:keys [status headers body error]} @(http/post ryhmasahkoposti_url options)]
               (if (and (= 200 status) (.contains body "Message-ID"))
@@ -132,8 +131,8 @@
                                     "Cookie" "CSRF=CSRF"
                                     "CSRF" "CSRF"
                                     "Content-Type" "application/json"
-                                    "ClientSubSystemCode" (props :clientSubSystemCode)
-                                    "Caller-Id" (props :callerId)}
+                                    "ClientSubSystemCode" client-id
+                                    "Caller-Id" client-id}
                           :body    mail_json}
                  {:keys [status headers error body]} @(http/post ryhmasahkoposti_url options)]
                   (log/info recipients_data body)
