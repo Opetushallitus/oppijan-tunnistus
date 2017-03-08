@@ -36,6 +36,7 @@
                  ;; Configuration
                  [environ "1.1.0"]
                  [fi.vm.sade.java-utils/java-properties "0.1.0-SNAPSHOT"]
+                 [propertea "1.2.3"]
 
                  ;; Logging
                  [org.slf4j/slf4j-api "1.7.21"]

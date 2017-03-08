@@ -10,6 +10,7 @@
       [fi.vm.sade.oppijantunnistus.expiration :refer [long-to-timestamp create-expiration-timestamp now-timestamp to-date-string to-psql-timestamp is-valid]]
       [fi.vm.sade.oppijantunnistus.url-helper :refer [url]]))
 
+(def ^:private client-id "oppijan-tunnistus")
 
 (defn ^:private add-token [valid_until email token callback_url metadata lang]
       (try
@@ -77,7 +78,12 @@
                                               :callingProcess "oppijantunnistus"}
                                   :recipient [{:email email}]})]
            (let [options {:timeout 3600000
-                          :headers {"Content-Type" "application/json"}
+                          :headers {
+                                    "Content-Type" "application/json"
+                                    "Cookie" "CSRF=CSRF"
+                                    "CSRF" "CSRF"
+                                    "ClientSubSystemCode" client-id
+                                    "Caller-Id" client-id}
                           :body    mail_json}
                  {:keys [status headers error body]} @(http/post ryhmasahkoposti_url options)]
                       (if (and (= 200 status) (contains? (read-str body) "id"))
@@ -95,7 +101,12 @@
                                            :hakuOid       haku_oid}
                               :recipient  [(create-recipient "vastaanottaja@example.com" "exampleToken" callback_url)]})
         options {:timeout 360000
-                   :headers {"Content-Type" "application/json"}
+                   :headers {
+                             "Content-Type" "application/json"
+                             "Cookie" "CSRF=CSRF"
+                             "CSRF" "CSRF"
+                             "ClientSubSystemCode" client-id
+                             "Caller-Id" client-id}
                    :body    mail_json}
         {:keys [status headers body error]} @(http/post ryhmasahkoposti_url options)]
               (if (and (= 200 status) (.contains body "Message-ID"))
@@ -116,7 +127,12 @@
                                                :subject        (str template_name " " haku_oid " " lang) }
                                   :recipient  (for [x recipients_data] (create-recipient (nth x 0) (nth x 1) callback_url))})]
            (let [options {:timeout 3600000
-                          :headers {"Content-Type" "application/json"}
+                          :headers {
+                                    "Cookie" "CSRF=CSRF"
+                                    "CSRF" "CSRF"
+                                    "Content-Type" "application/json"
+                                    "ClientSubSystemCode" client-id
+                                    "Caller-Id" client-id}
                           :body    mail_json}
                  {:keys [status headers error body]} @(http/post ryhmasahkoposti_url options)]
                   (log/info recipients_data body)

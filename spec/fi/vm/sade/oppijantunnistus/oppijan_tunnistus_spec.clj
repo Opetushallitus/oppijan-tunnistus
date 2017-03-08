@@ -1,13 +1,15 @@
 (ns fi.vm.sade.oppijantunnistus.oppijan_tunnistus_spec
-    (:require [speclj.core :refer :all]
-              [fi.vm.sade.oppijantunnistus.fake_server :refer [start-fake-app stop-fake-app enable_server port]]
-              [fi.vm.sade.oppijantunnistus.server :refer [oppijan-tunnistus-api]]
-              [ring.mock.request :refer [request content-type body]]
-              [clojure.data.json :refer [write-str]]
-              [cheshire.core :refer [parse-string]]
-              [clj-http.client :as client]
-              [ring.adapter.jetty :refer [run-jetty]]
-              [fi.vm.sade.oppijantunnistus.db.db-util :as db]))
+  (:require [speclj.core :refer :all]
+            [fi.vm.sade.oppijantunnistus.fake_server :refer [start-fake-app stop-fake-app enable_server port]]
+            [fi.vm.sade.oppijantunnistus.server :refer [oppijan-tunnistus-api]]
+            [ring.mock.request :refer [request content-type body]]
+            [clojure.data.json :refer [write-str]]
+            [cheshire.core :refer [parse-string]]
+            [clj-http.client :as client]
+            [ring.adapter.jetty :refer [run-jetty]]
+            [fi.vm.sade.oppijantunnistus.db.db-util :as db]
+            [clojure.java.io :as io]))
+
 
 (def oppijan_port (+ 10 port))
 (defn make_url_from_path [path]
