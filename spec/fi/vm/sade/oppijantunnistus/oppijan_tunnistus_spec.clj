@@ -118,6 +118,28 @@
                   (should= false (-> body :valid))       ; timestamp should have expired
                   (should= true (-> body :exists)))))
 
+          (it "should create token and return valid securelink"
+              (let [callback_url "http://mycallback_url#"
+                    email "only_token_test@email.com"
+                    response (client/post (make_url_from_path "/only_token")
+                                           {:body (write-str {:url callback_url
+                                                              :email email
+                                                              :lang "en"})
+                                            :content-type "application/json"})
+                    body (parse-string (response :body) true)]
+                (should= 200 (:status response))
+                (should= email (-> body :email))
+                (should-contain callback_url (-> body :securelink))
+                (let [securelink (-> body :securelink)
+                      token (subs securelink (count callback_url))
+                      response (client/get (make_url_from_path (str "/token/" token)))
+                      body (parse-string (response :body) true)]
+                  (should= 200 (:status response))
+                  (should= email (-> body :email))
+                  (should= "en" (-> body :lang))
+                  (should= true (-> body :valid))
+                  (should= true (-> body :exists)))
+                ))
 
           (it "should send verification email and return tokens"
               (let [response (client/post (make_url_from_path "/tokens")

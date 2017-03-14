@@ -148,6 +148,17 @@
             "sv" :sv
             :en))
 
+(defn create-verification-link [email callback_url metadata some_lang some_expiration]
+  (let [lang (sanitize_lang some_lang)
+        token (generate-token)
+        expires (if (some? some_expiration) (long-to-timestamp some_expiration) (create-expiration-timestamp))]
+    (try
+      (add-token (to-psql-timestamp expires) email token callback_url metadata lang)
+      (create-response email token callback_url)
+      (catch Exception e
+        (log/error "failed to create verification token" e)
+        (throw (RuntimeException. "failed to create verification token" e))))))
+
 (defn send-verification-link [email callback_url metadata some_lang some_template some_subject some_expiration]
       (let [lang (sanitize_lang some_lang)
             token (generate-token)

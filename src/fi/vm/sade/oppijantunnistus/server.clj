@@ -17,6 +17,11 @@
                                (s/optional-key :email) s/Str
                                (s/optional-key :lang) s/Str
                                (s/optional-key :metadata) (s/conditional map? {s/Keyword s/Keyword})})
+(s/defschema OnlyTokenRequest {:url (rs/describe s/Str "Base URL for secure link.")
+                               :email (rs/describe s/Str "Recipient email address.")
+                               (s/optional-key :expires) (rs/describe Long "Expiration date as unix timestamp (long milliseconds).")
+                               (s/optional-key :lang) (rs/describe s/Str "Email language in ISO-639-1 format. E.g. 'en','fi','sv'.")
+                               (s/optional-key :metadata) (s/conditional map? {s/Keyword s/Keyword})})
 (s/defschema SendRequest {:url (rs/describe s/Str "Base URL for secure link.")
                           :email (rs/describe s/Str "Recipient email address.")
                           (s/optional-key :expires) (rs/describe Long "Expiration date as unix timestamp (long milliseconds).")
@@ -32,6 +37,8 @@
                             :letterId (rs/describe s/Str "letter id for the letter batch for which these messages are generated for")
                             (s/optional-key :expires) (rs/describe Long "Expiration date as unix timestamp (long milliseconds).")
                             (s/optional-key :metadata) (s/conditional map? {s/Keyword s/Keyword})})
+(s/defschema TokenResponse {:email s/Str
+                            :securelink s/Str})
 (s/defschema TokensResponse {:recipients [{:email s/Str
                                            :securelink s/Str}]} )
 
@@ -43,6 +50,14 @@
                  :summary   "Verify token"
                  (do (log/info "Verifying token" token)
                      (response (retrieve-email-and-validity-with-token token))))
+            (POST* "/only_token" req
+                   :responses  {200 {:schema TokenResponse
+                                     :description "Verification email sent.
+                                    Returns verification-url that is same as callback-url+token."}}
+                   :body       [s_req OnlyTokenRequest]
+                   :summary    "Create verification token. Doesn't send email."
+                   (do (log/info "Creating verification token to email" (s_req :email))
+                       (ok (create-verification-link (s_req :email) (s_req :url) (s_req :metadata) (s_req :lang) (s_req :expires)))))
             (POST* "/token" req
                    :responses  {200 {:schema s/Str
                                     :description "Verification email sent.
