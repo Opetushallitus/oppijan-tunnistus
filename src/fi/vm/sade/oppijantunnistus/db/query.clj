@@ -4,3 +4,5 @@
 (defquery add-secure-link! "sql/insert.sql")
 
 (defquery get-secure-link "sql/get.sql")
+
+(defquery find-secure-link "sql/find.sql")

@@ -1,0 +1,1 @@
+select * from secure_link where metadata::jsonb @> ('{"hakemusOid": "' || :oid  || '"}')::jsonb and valid_until > current_timestamp;
