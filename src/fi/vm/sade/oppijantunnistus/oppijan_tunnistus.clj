@@ -39,8 +39,8 @@
 (defn ^:private get-token [token]
       (first (db/exec get-secure-link {:token token})))
 
-(defn ^:private find-token [application-oid]
-      (first (db/exec find-token {:oid application-oid})))
+(defn ^:private find-token [hakemusOid]
+      (first (db/exec find-secure-link {:hakemusOid hakemusOid})))
 
 (def ^:private email-template {:en (slurp (io/resource "email/email_en.mustache"))
                                :sv (slurp (io/resource "email/email_sv.mustache"))
@@ -168,7 +168,7 @@
 
 (defn ^:private find-or-add-securelink [email callback_url metadata lang some_expiration]
   (try
-    (if-let [entry (find-token (get-in metadata ["hakemusOid"]))]
+    (if-let [entry (find-token (get metadata :hakemusOid))]
       entry
       (let [token (generate-token)
             expires (if (some? some_expiration) (long-to-timestamp some_expiration) (create-expiration-timestamp))]
