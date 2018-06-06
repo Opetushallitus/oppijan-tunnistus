@@ -6,10 +6,6 @@
   (:require [clojure.tools.logging :as log]
             [clojure.tools.logging :as log])
   (import [org.flywaydb.core Flyway]
-          [org.flywaydb.core.api.migration.jdbc JdbcMigration]
-          [org.flywaydb.core.api.migration MigrationInfoProvider]
-          [org.flywaydb.core.api MigrationVersion]
-          [javax.sql.DataSource]
           [com.zaxxer.hikari HikariDataSource]))
 
 (when-not *compile-files*

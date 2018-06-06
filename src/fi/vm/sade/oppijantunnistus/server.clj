@@ -16,19 +16,19 @@
                                :valid s/Bool
                                (s/optional-key :email) s/Str
                                (s/optional-key :lang) s/Str
-                               (s/optional-key :metadata) (s/conditional map? {s/Keyword s/Keyword})})
+                               (s/optional-key :metadata) (s/conditional map? {s/Keyword s/Str})})
 (s/defschema OnlyTokenRequest {:url (rs/describe s/Str "Base URL for secure link.")
                                :email (rs/describe s/Str "Recipient email address.")
                                (s/optional-key :expires) (rs/describe Long "Expiration date as unix timestamp (long milliseconds).")
                                (s/optional-key :lang) (rs/describe s/Str "Email language in ISO-639-1 format. E.g. 'en','fi','sv'.")
-                               (s/optional-key :metadata) (s/conditional map? {s/Keyword s/Keyword})})
+                               (s/optional-key :metadata) (s/conditional map? {s/Keyword s/Str})})
 (s/defschema SendRequest {:url (rs/describe s/Str "Base URL for secure link.")
                           :email (rs/describe s/Str "Recipient email address.")
                           (s/optional-key :expires) (rs/describe Long "Expiration date as unix timestamp (long milliseconds).")
                           (s/optional-key :subject) (rs/describe s/Str "Email subject when template is used.")
                           (s/optional-key :template) (rs/describe s/Str "Email template in moustache format. Moustache template should contain key {{verification-link}} for 'link + token' placeholder. Other optional parameters are 'submit_time', 'expires'.")
                           (s/optional-key :lang) (rs/describe s/Str "Email language in ISO-639-1 format. E.g. 'en','fi','sv'.")
-                          (s/optional-key :metadata) (s/conditional map? {s/Keyword s/Keyword})})
+                          (s/optional-key :metadata) (s/conditional map? {s/Keyword s/Str})})
 (s/defschema TokensRequest {:url (rs/describe s/Str "Base URL for secure links.")
                             :templatename (rs/describe s/Str "Template name for email. Template with this name should exist in Viestintäpalvelu and it must have replacement with name 'securelink'")
                             :lang (rs/describe s/Str "Email language in ISO-639-1 format. E.g. 'en','fi','sv'.")
@@ -36,7 +36,7 @@
                             :hakuOid (rs/describe s/Str "hakuOid for the current token")
                             :letterId (rs/describe s/Str "letter id for the letter batch for which these messages are generated for")
                             (s/optional-key :expires) (rs/describe Long "Expiration date as unix timestamp (long milliseconds).")
-                            (s/optional-key :metadata) (s/conditional map? {s/Keyword s/Keyword})})
+                            (s/optional-key :metadata) (s/conditional map? {s/Keyword s/Str})})
 (s/defschema TokenResponse {:email s/Str
                             :securelink s/Str})
 (s/defschema TokensResponse {:recipients [{:email s/Str

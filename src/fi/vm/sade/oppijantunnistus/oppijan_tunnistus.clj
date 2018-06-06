@@ -6,7 +6,6 @@
       [clojure.java.io :as io]
       [org.httpkit.client :as http]
       [clojure.data.json :refer [write-str read-str]]
-      [clojure.core :refer [get-in]]
       [clojure.tools.logging :as log]
       [fi.vm.sade.oppijantunnistus.expiration :refer [long-to-timestamp create-expiration-timestamp now-timestamp to-date-string to-psql-timestamp is-valid]]
       [fi.vm.sade.oppijantunnistus.url-helper :refer [url]]))
