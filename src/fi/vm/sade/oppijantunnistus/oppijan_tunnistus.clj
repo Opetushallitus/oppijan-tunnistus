@@ -7,14 +7,14 @@
       [org.httpkit.client :as http]
       [clojure.data.json :refer [write-str read-str]]
       [clojure.tools.logging :as log]
-      [fi.vm.sade.oppijantunnistus.expiration :refer [long-to-timestamp create-expiration-timestamp now-timestamp to-date-string to-psql-timestamp is-valid]]
+      [fi.vm.sade.oppijantunnistus.expiration :refer [from-sql-time long-to-timestamp create-expiration-timestamp now-timestamp to-date-string to-psql-timestamp is-valid]]
       [fi.vm.sade.oppijantunnistus.url-helper :refer [url]]))
 
 (def ^:private client-id "oppijan-tunnistus")
 
 (defn ^:private add-token [valid_until email token callback_url metadata lang]
       (try
-        (db/exec add-secure-link! {:valid_until  valid_until
+        (db/exec add-secure-link<! {:valid_until  valid_until
                                    :email        email
                                    :token        token
                                    :callback_url callback_url
@@ -68,13 +68,10 @@
                     rval))
              {:valid false :exists false})))
 
-(defn ^:private send-ryhmasahkoposti
-      ([entry, template, subject]
-        send-ryhmasahkoposti (:valid_until entry) (:email entry) (:callback_url entry) template, subject)
-      ([expires email callback_url token raw_template subject]
+(defn ^:private send-ryhmasahkoposti [expires email callback_url token raw_template subject]
         (let [verification_link (str callback_url token)
               template (render raw_template {:verification-link verification_link
-                                             :expires           (to-date-string expires)
+                                             :expires           (to-date-string (from-sql-time expires))
                                              :submit_time       (to-date-string (now-timestamp))})
               ryhmasahkoposti_url (url "ryhmasahkoposti-service.email.firewall")
               mail_json (write-str {:email     {:from           "no-reply@opintopolku.fi"
@@ -96,7 +93,7 @@
                           verification_link
                           (do (log/error "Sending email failed with status " status ":" (if error error headers))
                               (throw (RuntimeException.
-                                       (str "Sending email failed with status " status)))))))))
+                                       (str "Sending email failed with status " status))))))))
 
 (defn ryhmasahkoposti-preview [callback_url template_name lang haku_oid]
   (let [ryhmasahkoposti_url (url "ryhmasahkoposti-service.email.preview.firewall")
@@ -186,7 +183,7 @@
           subject (if (some? some_subject) some_subject (email-subjects lang))
           template (if (some? some_template) some_template (email-template lang))]
       (if-let [entry (find-or-add-securelink email callback_url metadata lang some_expiration)]
-        (send-ryhmasahkoposti entry, template, subject)
+        (send-ryhmasahkoposti (:valid_until entry), (:email entry), (:callback_url entry), (:token entry), template, subject)
       )
     )
     (catch Exception e
