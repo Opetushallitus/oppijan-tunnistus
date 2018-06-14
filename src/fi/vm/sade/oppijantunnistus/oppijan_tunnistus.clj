@@ -91,7 +91,7 @@
                    {:keys [status headers error body]} @(http/post ryhmasahkoposti_url options)]
                         (if (and (= 200 status) (contains? (read-str body) "id"))
                           verification_link
-                          (do (log/error "Sending email failed with status " status ":" (if error error headers))
+                          (do (log/error "Sending email failed with status " status ":" (or error headers))
                               (throw (RuntimeException.
                                        (str "Sending email failed with status " status))))))))
 
@@ -141,7 +141,7 @@
                   (log/info recipients_data body)
                   (if (and (= 200 status) (contains? (read-str body) "id"))
                     (for [x recipients_data] (create-response (nth x 0) (nth x 1) callback_url))
-                    (do (log/error "Sending email failed with status " status ":" (if error error headers))
+                    (do (log/error "Sending email failed with status " status ":" (or error headers))
                         (throw (RuntimeException.
                                  (str "Sending email failed with status " status))))))))
 
@@ -154,7 +154,7 @@
 (defn create-verification-link [email callback_url metadata some_lang some_expiration]
   (let [lang (sanitize_lang some_lang)
         token (generate-token)
-        expires (if (some? some_expiration) (long-to-timestamp some_expiration) (create-expiration-timestamp))]
+        expires (or (some-> some_expiration (long-to-timestamp))(create-expiration-timestamp))]
     (try
       (add-token (to-psql-timestamp expires) email token callback_url metadata lang)
       (create-response email token callback_url)
@@ -164,10 +164,9 @@
 
 (defn ^:private find-or-add-securelink [email callback_url metadata lang some_expiration]
   (try
-    (if-let [entry (find-token (get metadata :hakemusOid))]
-      entry
+    (or (find-token (get metadata :hakemusOid))
       (let [token (generate-token)
-            expires (if (some? some_expiration) (long-to-timestamp some_expiration) (create-expiration-timestamp))]
+            expires (or (some-> some_expiration (long-to-timestamp))(create-expiration-timestamp))]
               (add-token (to-psql-timestamp expires) email token callback_url metadata lang)
       )
     )
@@ -180,8 +179,8 @@
 (defn send-verification-link [email callback_url metadata some_lang some_template some_subject some_expiration]
   (try
     (let [lang (sanitize_lang some_lang)
-          subject (if (some? some_subject) some_subject (email-subjects lang))
-          template (if (some? some_template) some_template (email-template lang))]
+          subject (or some_subject (email-subjects lang))
+          template (or some_template (email-template lang))]
       (if-let [entry (find-or-add-securelink email callback_url metadata lang some_expiration)]
         (send-ryhmasahkoposti (:valid_until entry), (:email entry), (:callback_url entry), (:token entry), template, subject)
       )
@@ -210,9 +209,7 @@
         template-name (if-not (clojure.string/blank? template-name)
                         template-name
                         "default_template_name")
-        expires (if expires
-                  (long-to-timestamp expires)
-                  (create-expiration-timestamp))
+        expires (or (some-> expires (long-to-timestamp)) (create-expiration-timestamp))
         token-metas (mapv token-meta application-oid-to-email-address)
         tokens (mapv (fn [meta]
                        [(:email meta) (:token meta)]) token-metas)]
