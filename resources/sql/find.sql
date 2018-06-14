@@ -1,0 +1,1 @@
+select * from secure_link where ((metadata ->> 'hakemusOid') = :hakemusOid) and valid_until > current_timestamp;

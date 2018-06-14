@@ -16,6 +16,7 @@
 (defn now-timestamp [] (l/local-now))
 
 (defn to-date-string [timestamp] (f/unparse template-formatter timestamp))
+(defn from-sql-time [timestamp] (c/from-sql-time timestamp))
 (defn to-psql-timestamp [timestamp] (str (f/unparse formatter timestamp) " " timezone-id))
 
 (defn is-valid [sql-timestamp] (t/before? (l/local-now) (c/from-sql-time sql-timestamp)))
