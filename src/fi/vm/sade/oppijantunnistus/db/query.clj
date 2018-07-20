@@ -6,3 +6,5 @@
 (defquery get-secure-link "sql/get.sql")
 
 (defquery find-secure-link "sql/find.sql")
+
+(defquery update-secure-link "sql/update.sql")
