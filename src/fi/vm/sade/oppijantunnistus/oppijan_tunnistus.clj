@@ -182,7 +182,7 @@
           subject (or some_subject (email-subjects lang))
           template (or some_template (email-template lang))]
       (if-let [entry (find-or-add-securelink email callback_url metadata lang some_expiration)]
-        (send-ryhmasahkoposti (:valid_until entry), (:email entry), (:callback_url entry), (:token entry), template, subject)
+        (send-ryhmasahkoposti (:valid_until entry), email, (:callback_url entry), (:token entry), template, subject)
       )
     )
     (catch Exception e
