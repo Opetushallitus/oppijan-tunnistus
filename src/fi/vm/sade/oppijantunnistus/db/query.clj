@@ -7,4 +7,4 @@
 
 (defquery find-secure-link "sql/find.sql")
 
-(defquery update-secure-link "sql/update.sql")
+(defquery update-secure-link<! "sql/update.sql")
