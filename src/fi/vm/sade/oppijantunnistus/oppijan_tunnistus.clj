@@ -26,13 +26,13 @@
                    (str "Saving token " token " for " email " to database failed")
                    e)))))
 
-(defn ^:private update-token-email [token new_email]
+(defn ^:private update-email-returning-token [hakemusOid new_email]
   (try
-    (db/exec update-secure-link<! {:token        token
-                                  :email        new_email})
+    (db/exec update-email-returning-secure-link<! {:hakemusOid        hakemusOid
+                                             :email        new_email})
     (catch Exception e
       (throw (RuntimeException.
-               (str "Updating token " token " to " new_email " to database failed")
+               (str "Returning token hakemusOid " hakemusOid " updating email to " new_email " to database failed")
                e)))))
 
 (defn ^:private add-tokens [token-metas expires callback-url lang]
@@ -172,10 +172,7 @@
         (throw (RuntimeException. "failed to create verification token" e))))))
 
 (defn ^:private find-and-update-token [metadata new_email]
-  (when-let [token (find-token (get metadata :hakemusOid))]
-     (do (update-token-email {:token token} new_email)
-                         token))
-  )
+     (update-email-returning-token (get metadata :hakemusOid) new_email))
 
 (defn ^:private find-or-add-securelink [email callback_url metadata lang some_expiration]
   (try
