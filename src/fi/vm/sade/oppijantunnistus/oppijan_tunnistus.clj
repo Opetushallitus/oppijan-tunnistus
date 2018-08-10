@@ -29,7 +29,7 @@
 (defn ^:private update-email-returning-token [hakemusOid new_email]
   (try
     (db/exec update-email-returning-secure-link<! {:hakemusOid        hakemusOid
-                                             :email        new_email})
+                                                   :new_email        new_email})
     (catch Exception e
       (throw (RuntimeException.
                (str "Returning token hakemusOid " hakemusOid " updating email to " new_email " to database failed")
