@@ -26,6 +26,15 @@
                    (str "Saving token " token " for " email " to database failed")
                    e)))))
 
+(defn ^:private update-email-returning-token [hakemusOid new_email]
+  (try
+    (db/exec update-email-returning-secure-link {:hakemusOid        hakemusOid
+                                                   :new_email        new_email})
+    (catch Exception e
+      (throw (RuntimeException.
+               (str "Returning token hakemusOid " hakemusOid " updating email to " new_email " to database failed")
+               e)))))
+
 (defn ^:private add-tokens [token-metas expires callback-url lang]
   (doseq [meta token-metas]
     (add-token (to-psql-timestamp expires)
@@ -162,9 +171,12 @@
         (log/error "failed to create verification token" e)
         (throw (RuntimeException. "failed to create verification token" e))))))
 
+(defn ^:private find-and-update-token [metadata new_email]
+     (update-email-returning-token (get metadata :hakemusOid) new_email))
+
 (defn ^:private find-or-add-securelink [email callback_url metadata lang some_expiration]
   (try
-    (or (find-token (get metadata :hakemusOid))
+    (or (find-and-update-token metadata email)
       (let [token (generate-token)
             expires (or (some-> some_expiration (long-to-timestamp))(create-expiration-timestamp))]
               (add-token (to-psql-timestamp expires) email token callback_url metadata lang)
@@ -182,7 +194,7 @@
           subject (or some_subject (email-subjects lang))
           template (or some_template (email-template lang))]
       (if-let [entry (find-or-add-securelink email callback_url metadata lang some_expiration)]
-        (send-ryhmasahkoposti (:valid_until entry), (:email entry), (:callback_url entry), (:token entry), template, subject)
+        (send-ryhmasahkoposti (:valid_until entry), email, (:callback_url entry), (:token entry), template, subject)
       )
     )
     (catch Exception e
