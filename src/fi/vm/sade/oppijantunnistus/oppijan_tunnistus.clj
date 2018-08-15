@@ -28,7 +28,7 @@
 
 (defn ^:private update-email-returning-token [hakemusOid new_email]
   (try
-    (db/exec update-email-returning-secure-link<! {:hakemusOid        hakemusOid
+    (db/exec update-email-returning-secure-link {:hakemusOid        hakemusOid
                                                    :new_email        new_email})
     (catch Exception e
       (throw (RuntimeException.
