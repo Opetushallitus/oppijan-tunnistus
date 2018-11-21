@@ -14,6 +14,7 @@
 
 (defn ^:private add-token [valid_until email token callback_url metadata lang]
       (try
+        (log/info "Adding new token to database: valid_until: " valid_until " | email: " email " | callback_url: " callback_url " | token: " token)
         (db/exec add-secure-link<! {:valid_until  valid_until
                                    :email        email
                                    :token        token
@@ -26,10 +27,12 @@
                    (str "Saving token " token " for " email " to database failed")
                    e)))))
 
-(defn ^:private update-email-returning-token [hakemusOid new_email]
+(defn ^:private update-email-returning-token [hakemusOid new_email callbackUrl]
   (try
+    (log/info "Updating secure link: hakemusOid: " hakemusOid " | new_email: " new_email " | callbackUrl: " callbackUrl)
     (db/exec update-email-returning-secure-link {:hakemusOid        hakemusOid
-                                                   :new_email        new_email})
+                                                 :new_email        new_email
+                                                 :callbackUrl callbackUrl})
     (catch Exception e
       (throw (RuntimeException.
                (str "Returning token hakemusOid " hakemusOid " updating email to " new_email " to database failed")
@@ -89,6 +92,7 @@
                                                 :html           true
                                                 :callingProcess "oppijantunnistus"}
                                     :recipient [{:email email}]})]
+             (log/info "Sending email to " email " with verification-link: " verification_link " | token: " token " | callback_url: " callback_url)
              (let [options {:timeout 3600000
                             :headers {
                                       "Content-Type" "application/json"
@@ -171,12 +175,12 @@
         (log/error "failed to create verification token" e)
         (throw (RuntimeException. "failed to create verification token" e))))))
 
-(defn ^:private find-and-update-token [metadata new_email]
-     (update-email-returning-token (get metadata :hakemusOid) new_email))
+(defn ^:private find-and-update-token [metadata new_email callback_url]
+     (seq (update-email-returning-token (get metadata :hakemusOid) new_email callback_url)))
 
 (defn ^:private find-or-add-securelink [email callback_url metadata lang some_expiration]
   (try
-    (or (find-and-update-token metadata email)
+    (or (find-and-update-token metadata email callback_url)
       (let [token (generate-token)
             expires (or (some-> some_expiration (long-to-timestamp))(create-expiration-timestamp))]
               (add-token (to-psql-timestamp expires) email token callback_url metadata lang)
