@@ -38,13 +38,14 @@
                (str "Returning token hakemusOid " hakemusOid " updating email to " new_email " to database failed")
                e)))))
 
-(defn ^:private add-tokens [token-metas expires callback-url lang]
+(defn ^:private add-tokens [token-metas haku-oid expires callback-url lang]
   (doseq [meta token-metas]
     (add-token (to-psql-timestamp expires)
                (:email meta)
                (:token meta)
                callback-url
-               {"hakemusOid" (:application-oid meta)}
+               {"hakemusOid" (:application-oid meta)
+                "hakuOid"    haku-oid}
                lang)))
 
 (defn ^:private get-token [token]
@@ -230,7 +231,7 @@
         tokens (mapv (fn [meta]
                        [(:email meta) (:token meta)]) token-metas)]
     (try
-      (add-tokens token-metas expires callback-url lang)
+      (add-tokens token-metas haku-oid expires callback-url lang)
       (send-ryhmasahkoposti-with-tokens tokens callback-url template-name lang haku-oid letter-id  )
       (catch Exception e
         (log/error "failed to send verification links" e)
