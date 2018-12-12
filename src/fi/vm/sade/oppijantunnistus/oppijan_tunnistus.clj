@@ -177,7 +177,7 @@
         (throw (RuntimeException. "failed to create verification token" e))))))
 
 (defn ^:private find-and-update-token [metadata new_email callback_url]
-     (seq (update-email-returning-token (get metadata :hakemusOid) new_email callback_url)))
+     (first (seq (update-email-returning-token (get metadata :hakemusOid) new_email callback_url))))
 
 (defn ^:private find-or-add-securelink [email callback_url metadata lang some_expiration]
   (try
