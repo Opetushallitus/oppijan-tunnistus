@@ -30,7 +30,7 @@ script:
   - mv -v target/uberjar/oppijan-tunnistus-*-standalone.jar $DOCKER_BUILD_DIR/artifact/oppijan-tunnistus.jar
   - cp -vr oph-configuration $DOCKER_BUILD_DIR/config/
 
-  - export BASE_IMAGE="base-legacy:0.1"
+  - export BASE_IMAGE="baseimage-fatjar:master"
   - ./ci-tools/common/pull-image.sh
   - ./ci-tools/build/build-fatjar.sh oppijan-tunnistus
 
