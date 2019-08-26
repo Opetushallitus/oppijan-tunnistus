@@ -2,8 +2,8 @@
  :db {:schema "public"
       :servername "{{oppijantunnistus_db_host}}"
       :databasename "{{oppijantunnistus_db_name}}"
-      :username "{{oppijantunnistus_db_username}}"
-      :password "{{oppijantunnistus_db_password}}"
+      :username "{{postgres_app_user}}"
+      :password "{{oppijantunnistus_db_app_password}}"
       :port {{oppijantunnistus_db_port}}}
  :expires-in { :days {{oppijantunnistus_expires_in_days}} }
  :server {:port {{palvelu_portti}}
