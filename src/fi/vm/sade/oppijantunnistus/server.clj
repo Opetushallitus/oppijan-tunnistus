@@ -4,8 +4,8 @@
             [ring.util.response :refer [response]]
             [ring.util.http-response :refer [ok]]
             [cheshire.core :refer [parse-string]]
-            [compojure.api.sweet :refer :all]
-            [compojure.core :refer [defroutes GET POST context]]
+            [compojure.api.sweet :refer [api defroutes GET POST context]]
+            [compojure.api.swagger :refer [swagger-docs swagger-ui]]
             [compojure.route :as route]
             [clojure.tools.logging :as log]
             [schema.core :as s]
@@ -42,15 +42,15 @@
 (s/defschema TokensResponse {:recipients [{:email s/Str
                                            :securelink s/Str}]} )
 
-(defroutes* oppijan-tunnistus-routes
+(defroutes oppijan-tunnistus-routes
             "Oppijan tunnistus API"
-            (GET* "/token/:token" [token]
+            (GET "/token/:token" [token]
                  :responses {200 {:schema ValidityResponse
                                   :description "Returns token validity and email in case token exists"}}
                  :summary   "Verify token"
                  (do (log/info "Verifying token" token)
                      (response (retrieve-email-and-validity-with-token token))))
-            (POST* "/only_token" req
+            (POST "/only_token" req
                    :responses  {200 {:schema TokenResponse
                                      :description "Verification email sent.
                                     Returns verification-url that is same as callback-url+token."}}
@@ -58,7 +58,7 @@
                    :summary    "Create verification token. Doesn't send email."
                    (do (log/info "Creating verification token to email" (s_req :email))
                        (ok (create-verification-link (s_req :email) (s_req :url) (s_req :metadata) (s_req :lang) (s_req :expires)))))
-            (POST* "/token" req
+            (POST "/token" req
                    :responses  {200 {:schema s/Str
                                     :description "Verification email sent.
                                     Returns verification-url that is same as callback-url+token."}}
@@ -66,7 +66,7 @@
                   :summary    "Send verification email"
                   (do (log/info "Sending verification link to email" (s_req :email))
                       (ok (send-verification-link (s_req :email) (s_req :url) (s_req :metadata) (s_req :lang) (s_req :template) (s_req :subject) (s_req :expires)))))
-            (GET* "/preview/haku/:haku-oid/template/:template-name/lang/:lang" [template-name haku-oid lang :as req]
+            (GET "/preview/haku/:haku-oid/template/:template-name/lang/:lang" [template-name haku-oid lang :as req]
                    :path-params [template-name :- s/Str haku-oid :- s/Str lang :- s/Str]
                    :query-params [callback-url :- s/Str]
                    :summary    "Preview verification email"
@@ -76,7 +76,7 @@
                           :headers {"Content-Type" "message/rfc822; charset=UTF-8"
                                     "Content-Disposition" (str "inline; filename=\"example-" template-name "-" lang "-" haku-oid ".eml\"")}
                           :body email})))
-            (POST* "/tokens" req
+            (POST "/tokens" req
                   :responses  {200 {:schema TokensResponse
                                     :description "Sends multiple verification emails using given template.
                                     Returns a list of verification-urls (callback-url+token)."}}
@@ -86,14 +86,15 @@
                       (response {:recipients (send-verification-links s_req)})))
             (route/not-found "Page not found"))
 
-(defroutes* doc-routes
-            "API documentation browser"
-            (swagger-docs {:info {:title "Oppijan tunnistus API"}})
-            (swagger-ui :swagger-docs "/oppijan-tunnistus/swagger/swagger.json"))
-
-(defapi oppijan-tunnistus-api
-        {:ring-swagger {:ignore-missing-mappings? true}}
-        (context* "/oppijan-tunnistus" []
-                  (route/resources "/")
-                  (context* "/api/v1" [] oppijan-tunnistus-routes)
-                  (context* "/swagger" [] doc-routes)))
+(defn new-api []
+  (api {:swagger      {:spec    "/oppijan-tunnistus/swagger/swagger.json"
+                       :ui      "/oppijan-tunnistus/swagger/api-docs"
+                       :data    {:info {:version     "0.1.0"
+                                        :title       "Oppijan tunnistus API"
+                                        :description "Token verification API For OPH"}
+                                 :tags [{:name "oppijantunnistus" :description "Oppijan tunnistus API"}]}
+                       :options {:ui {:validatorUrl nil}}}
+        :ring-swagger {:ignore-missing-mappings? true}}
+       (context "/oppijan-tunnistus" []
+         (route/resources "/")
+         (context "/api/v1" [] oppijan-tunnistus-routes))))

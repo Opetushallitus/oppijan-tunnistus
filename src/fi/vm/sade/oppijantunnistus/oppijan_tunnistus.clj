@@ -1,14 +1,20 @@
 (ns fi.vm.sade.oppijantunnistus.oppijan-tunnistus
-    (:require [fi.vm.sade.oppijantunnistus.db.query :refer :all]
+    (:require
       [fi.vm.sade.oppijantunnistus.db.db-util :as db]
       [fi.vm.sade.oppijantunnistus.token :refer [generate-token]]
       [clostache.parser :refer [render]]
       [clojure.java.io :as io]
+      [yesql.core :as sql]
       [org.httpkit.client :as http]
       [clojure.data.json :refer [write-str read-str]]
       [clojure.tools.logging :as log]
       [fi.vm.sade.oppijantunnistus.expiration :refer [from-sql-time long-to-timestamp create-expiration-timestamp now-timestamp to-date-string to-psql-timestamp is-valid]]
       [fi.vm.sade.oppijantunnistus.url-helper :refer [url]]))
+
+(declare add-secure-link<!)
+(declare update-email-returning-secure-link!)
+(declare get-secure-link)
+(sql/defqueries "sql/queries.sql")
 
 (def ^:private client-id "oppijan-tunnistus")
 
@@ -30,9 +36,9 @@
 (defn ^:private update-email-returning-token [hakemusOid new_email callbackUrl]
   (try
     (log/info "Updating secure link: hakemusOid: " hakemusOid " | new_email: " new_email " | callbackUrl: " callbackUrl)
-    (db/exec update-email-returning-secure-link {:hakemusOid        hakemusOid
-                                                 :new_email        new_email
-                                                 :callbackUrl callbackUrl})
+    (db/exec update-email-returning-secure-link! {:hakemusOid        hakemusOid
+                                                  :new_email        new_email
+                                                  :callbackUrl callbackUrl})
     (catch Exception e
       (throw (RuntimeException.
                (str "Returning token hakemusOid " hakemusOid " updating email to " new_email " to database failed")
@@ -50,9 +56,6 @@
 
 (defn ^:private get-token [token]
       (first (db/exec get-secure-link {:token token})))
-
-(defn ^:private find-token [hakemusOid]
-      (first (db/exec find-secure-link {:hakemusOid hakemusOid})))
 
 (def ^:private email-template {:en (slurp (io/resource "email/email_en.mustache"))
                                :sv (slurp (io/resource "email/email_sv.mustache"))
@@ -222,8 +225,7 @@
     expires                          :expires
     haku-oid                         :hakuOid
     letter-id                        :letterId}]
-  (let [sanitized-lang (sanitize_lang lang)
-        template-name (if-not (clojure.string/blank? template-name)
+  (let [template-name (if-not (clojure.string/blank? template-name)
                         template-name
                         "default_template_name")
         expires (or (some-> expires (long-to-timestamp)) (create-expiration-timestamp))
