@@ -26,6 +26,7 @@
   (log/info "Running db migrations")
   (db/migrate "db.migration")
   (log/info "Starting server")
-  (run-jetty (new-api) {:port         (-> cfg :server :port)
-                        :context      "/api/v1"
-                        :configurator configure-request-log}))
+  (run-jetty (new-api)
+             {:port         (-> cfg :server :port)
+              :context      "/api/v1"
+              :configurator configure-request-log}))
