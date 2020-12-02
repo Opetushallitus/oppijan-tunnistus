@@ -2,7 +2,7 @@
   (:use   [fi.vm.sade.oppijantunnistus.oppijan-tunnistus])
   (:require [ring.middleware.json :refer [wrap-json-response wrap-json-params]]
             [ring.util.response :refer [response]]
-            [ring.util.http-response :refer [ok]]
+            [ring.util.http-response :refer [ok unauthorized!]]
             [cheshire.core :refer [parse-string]]
             [fi.vm.sade.oppijantunnistus.urls :as urls]
             [environ.core :refer [env]]
@@ -25,6 +25,12 @@
 
 (defn- dev? []
   (= (:dev? env) "true"))
+
+(defn check-authorization! [session]
+  (when-not (or (dev?)
+                (some #(= "oppijantunnistus-crud" %) (-> session :identity :rights)))
+    (log/error "Missing user rights: " (-> session :identity :rights))
+    (unauthorized!)))
 
 (s/defschema ValidityResponse {:exists s/Bool
                                :valid s/Bool
@@ -65,45 +71,50 @@
 
 (defroutes oppijan-tunnistus-routes
             "Oppijan tunnistus API"
-            (GET "/token/:token" [token]
+            (GET "/token/:token" [token session]
                  :responses {200 {:schema ValidityResponse
                                   :description "Returns token validity and email in case token exists"}}
                  :summary   "Verify token"
-                 (do (log/info "Verifying token" token)
+                 (do (check-authorization! session)
+                     (log/info "Verifying token" token)
                      (response (retrieve-email-and-validity-with-token token))))
-            (POST "/only_token" req
+            (POST "/only_token" {session :session}
                    :responses  {200 {:schema TokenResponse
                                      :description "Verification email sent.
                                     Returns verification-url that is same as callback-url+token."}}
                    :body       [s_req OnlyTokenRequest]
                    :summary    "Create verification token. Doesn't send email."
-                   (do (log/info "Creating verification token to email" (s_req :email))
+                   (do (check-authorization! session)
+                       (log/info "Creating verification token to email" (s_req :email))
                        (ok (create-verification-link (s_req :email) (s_req :url) (s_req :metadata) (s_req :lang) (s_req :expires)))))
-            (POST "/token" {}
+            (POST "/token" {session :session}
                    :responses  {200 {:schema s/Str
                                     :description "Verification email sent.
                                     Returns verification-url that is same as callback-url+token."}}
                   :body       [s_req SendRequest]
                   :summary    "Send verification email"
-                  (do (log/info "Sending verification link to email" (s_req :email))
+                  (do (check-authorization! session)
+                      (log/info "Sending verification link to email" (s_req :email))
                       (ok (send-verification-link (s_req :email) (s_req :url) (s_req :metadata) (s_req :lang) (s_req :template) (s_req :subject) (s_req :expires)))))
-            (GET "/preview/haku/:haku-oid/template/:template-name/lang/:lang" [template-name haku-oid lang :as req]
+            (GET "/preview/haku/:haku-oid/template/:template-name/lang/:lang" [template-name haku-oid lang session :as req]
                    :path-params [template-name :- s/Str haku-oid :- s/Str lang :- s/Str]
                    :query-params [callback-url :- s/Str]
                    :summary    "Preview verification email"
-                   (do (log/info "Preview verification link email" (:params  req))
+                   (do (check-authorization! session)
+                       (log/info "Preview verification link email" (:params  req))
                        (let [email (ryhmasahkoposti-preview callback-url template-name lang haku-oid)]
                          {:status 200
                           :headers {"Content-Type" "message/rfc822; charset=UTF-8"
                                     "Content-Disposition" (str "inline; filename=\"example-" template-name "-" lang "-" haku-oid ".eml\"")}
                           :body email})))
-            (POST "/tokens" req
+            (POST "/tokens" {session :session}
                   :responses  {200 {:schema TokensResponse
                                     :description "Sends multiple verification emails using given template.
                                     Returns a list of verification-urls (callback-url+token)."}}
                   :body        [s_req TokensRequest]
                   :summary     "Send multiple verification emails"
-                  (do (log/info "Sending multiple verification emails")
+                  (do (check-authorization! session)
+                      (log/info "Sending multiple verification emails")
                       (response {:recipients (send-verification-links s_req)})))
             (route/not-found "Page not found"))
 
