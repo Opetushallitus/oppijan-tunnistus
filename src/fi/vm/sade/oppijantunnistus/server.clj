@@ -79,7 +79,7 @@
                    :summary    "Create verification token. Doesn't send email."
                    (do (log/info "Creating verification token to email" (s_req :email))
                        (ok (create-verification-link (s_req :email) (s_req :url) (s_req :metadata) (s_req :lang) (s_req :expires)))))
-            (POST "/token" req
+            (POST "/token" {}
                    :responses  {200 {:schema s/Str
                                     :description "Verification email sent.
                                     Returns verification-url that is same as callback-url+token."}}

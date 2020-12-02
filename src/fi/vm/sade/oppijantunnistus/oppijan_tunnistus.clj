@@ -36,9 +36,10 @@
 (defn ^:private update-email-returning-token [hakemusOid new_email callbackUrl]
   (try
     (log/info "Updating secure link: hakemusOid: " hakemusOid " | new_email: " new_email " | callbackUrl: " callbackUrl)
-    (db/exec update-email-returning-secure-link! {:hakemusOid        hakemusOid
-                                                  :new_email        new_email
-                                                  :callbackUrl callbackUrl})
+    (let [i (db/exec update-email-returning-secure-link! {:hakemusOid  hakemusOid
+                                                          :new_email   new_email
+                                                          :callbackUrl callbackUrl})]
+      i)
     (catch Exception e
       (throw (RuntimeException.
                (str "Returning token hakemusOid " hakemusOid " updating email to " new_email " to database failed")
@@ -80,14 +81,14 @@
              (let [rval {:email (entry :email) :valid (is-valid (entry :valid_until)) :exists true :lang (entry :lang)}
                    metadata (entry :metadata)]
                   (if (some? metadata)
-                    (assoc rval :metadata (read-str (.getValue metadata)))
+                    (assoc rval :metadata metadata)
                     rval))
              {:valid false :exists false})))
 
 (defn ^:private send-ryhmasahkoposti [expires email callback_url token raw_template subject]
         (let [verification_link (str callback_url token)
               template (render raw_template {:verification-link verification_link
-                                             :expires           (to-date-string (from-sql-time expires))
+                                             :expires           (to-date-string expires)
                                              :submit_time       (to-date-string (now-timestamp))})
               ryhmasahkoposti_url (url "ryhmasahkoposti-service.email.firewall")
               mail_json (write-str {:email     {:from           "no-reply@opintopolku.fi"
@@ -110,7 +111,7 @@
                           verification_link
                           (do (log/error "Sending email failed with status " status ":" (or error headers))
                               (throw (RuntimeException.
-                                       (str "Sending email failed with status " status))))))))
+                                       (str "Sending email failed with status " status " (address=" (url "ryhmasahkoposti-service.email.firewall") "). Error: " error))))))))
 
 (defn ryhmasahkoposti-preview [callback_url template_name lang haku_oid]
   (let [ryhmasahkoposti_url (url "ryhmasahkoposti-service.email.preview.firewall")
@@ -180,36 +181,33 @@
         (throw (RuntimeException. "failed to create verification token" e))))))
 
 (defn ^:private find-and-update-token [metadata new_email callback_url]
-     (first (seq (update-email-returning-token (get metadata :hakemusOid) new_email callback_url))))
+  (let [rval (update-email-returning-token (get metadata :hakemusOid) new_email callback_url)]
+    (if (= 0 rval)
+      nil
+      rval)))
 
 (defn ^:private find-or-add-securelink [email callback_url metadata lang some_expiration]
   (try
     (or (find-and-update-token metadata email callback_url)
-      (let [token (generate-token)
-            expires (or (some-> some_expiration (long-to-timestamp))(create-expiration-timestamp))]
-              (add-token (to-psql-timestamp expires) email token callback_url metadata lang)
-      )
-    )
+        (let [token (generate-token)
+              expires (or (some-> some_expiration (long-to-timestamp))
+                          (create-expiration-timestamp))
+              new-token (add-token (to-psql-timestamp expires) email token callback_url metadata lang)]
+          new-token))
     (catch Exception e
       (log/error "failed to find or create securelink" e)
-      (throw (RuntimeException. "failed to find or create securelink" e)))
-  )
-)
+      (throw (RuntimeException. "failed to find or create securelink" e)))))
 
 (defn send-verification-link [email callback_url metadata some_lang some_template some_subject some_expiration]
   (try
     (let [lang (sanitize_lang some_lang)
           subject (or some_subject (email-subjects lang))
           template (or some_template (email-template lang))]
-      (if-let [entry (find-or-add-securelink email callback_url metadata lang some_expiration)]
-        (send-ryhmasahkoposti (:valid_until entry), email, (:callback_url entry), (:token entry), template, subject)
-      )
-    )
+      (when-let [entry (find-or-add-securelink email callback_url metadata lang some_expiration)]
+        (send-ryhmasahkoposti (:valid_until entry), email, (:callback_url entry), (:token entry), template, subject)))
     (catch Exception e
       (log/error "failed to send verification link" e)
-      (throw (RuntimeException. "failed to send verification link" e)))
-  )
-)
+      (throw (RuntimeException. "failed to send verification link" e)))))
 
 (defn ^:private token-meta [[application-oid email]]
   {:application-oid application-oid
