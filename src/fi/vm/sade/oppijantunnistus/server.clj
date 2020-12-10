@@ -65,7 +65,7 @@
 (defn- create-wrap-database-backed-session [session-store]
   (fn [handler]
     (ring-session/wrap-session handler
-                               {:root         "/oppijantunnistus"
+                               {:root         "/oppijan-tunnistus"
                                 :cookie-attrs {:secure (not (dev?))}
                                 :store        session-store})))
 

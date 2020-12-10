@@ -5,17 +5,17 @@
   (str (-> cfg :host-virkailija) "/kayttooikeus-service/kayttooikeus/kayttaja?username=" username))
 
 (defn redirect-to-login-failed-page-url []
-  (str (-> cfg :host-virkailija) "/oppijantunnistus/virhe"))
+  (str (-> cfg :host-virkailija) "/oppijan-tunnistus/virhe"))
 
 (defn oppijantunnistus-login-url []
-  (str (-> cfg :host-virkailija) "/oppijantunnistus/auth/cas"))
+  (str (-> cfg :host-virkailija) "/oppijan-tunnistus/auth/cas"))
 
 (defn cas-login-url []
   (let [host (-> cfg :host-virkailija)]
-    (str host "/cas/login?service=" host "/oppijantunnistus/auth/cas")))
+    (str host "/cas/login?service=" host "/oppijan-tunnistus/auth/cas")))
 (defn cas-logout-url []
   (let [host (-> cfg :host-virkailija)]
-    (str host "/cas/logout?service=" host "/oppijantunnistus/auth/cas")))
+    (str host "/cas/logout?service=" host "/oppijan-tunnistus/auth/cas")))
 
 (defn cas-redirect-url []
-  (str (-> cfg :host-virkailija) "/oppijantunnistus/auth/checkpermission"))
+  (str (-> cfg :host-virkailija) "/oppijan-tunnistus/auth/checkpermission"))
