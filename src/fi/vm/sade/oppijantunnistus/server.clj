@@ -139,7 +139,7 @@
                     (crdsa-login/logout session (urls/cas-logout-url)))))))
 
 (defn new-api []
-  (let [login-cas-client (delay (delay (cas/new-cas-client)))
+  (let [login-cas-client (delay (cas/new-cas-client))
         session-store (create-session-store db/datasource)
         kayttooikeus-cas-client (delay (cas/new-client "/kayttooikeus-service" "j_spring_cas_security_check"
                                                        "JSESSIONID"))]
