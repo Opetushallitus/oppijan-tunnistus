@@ -24,7 +24,7 @@
 
 (defn new-cas-client []
   (new CasClient
-       (-> cfg :virkailija-host)
+       (-> cfg :host-virkailija)
        (.defaultClient package$/MODULE$)
        caller-id))
 
