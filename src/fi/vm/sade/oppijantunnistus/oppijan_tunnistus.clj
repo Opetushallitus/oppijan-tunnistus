@@ -115,7 +115,7 @@
                                       "Caller-Id" client-id}
                             :body    mail_json}
                    {:keys [status body]} (post ryhmasahkoposti_url options)]
-                        (if (and (= 200 status) (contains? body "id"))
+                        (if (and (= 200 status) (.contains body "id"))
                           verification_link
                           (do (log/error "Sending email failed with status " status)
                               (throw (RuntimeException.
@@ -163,7 +163,7 @@
                           :body    mail_json}
                  {:keys [status body]} (post ryhmasahkoposti_url options)]
                   (log/info recipients_data body)
-                  (if (and (= 200 status) (contains? body "id"))
+                  (if (and (= 200 status) (.contains body "id"))
                     (for [x recipients_data] (create-response (nth x 0) (nth x 1) callback_url))
                     (do (log/error "Sending email failed with status " status)
                         (throw (RuntimeException.
