@@ -13,7 +13,7 @@
                  ;; HTTP server
                  [javax.servlet/servlet-api "2.5"]
                  [http-kit "2.2.0"]
-                 [clj-http "3.3.0"]
+                 [clj-http "3.10.0"]
                  [ring "1.8.2"]
                  [ring/ring-jetty-adapter "1.8.2"]
                  [ring/ring-servlet "1.8.2"]
