@@ -29,7 +29,7 @@
 (defn check-authorization! [session]
   (when-not (or (dev?)
                 (some #(= "oppijantunnistus-crud" %) (-> session :identity :rights)))
-    (log/error "Missing user rights: " (-> session :identity :rights))
+    (log/error "Missing user rights: " session)             ;(-> session :identity :rights)
     (unauthorized!)))
 
 (s/defschema ValidityResponse {:exists s/Bool
