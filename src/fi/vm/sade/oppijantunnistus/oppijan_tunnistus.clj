@@ -88,8 +88,8 @@
 (defn post [url options]
   (http-client/request
     (merge {:method             :post
-            :connection-timeout 60000
-            :socket-timeout     60000
+            :connection-timeout 3600000
+            :socket-timeout     3600000
             :throw-exceptions   false
             :url                url}
            options)))
