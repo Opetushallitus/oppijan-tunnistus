@@ -209,9 +209,7 @@
     (let [lang (sanitize_lang some_lang)
           subject (or some_subject (email-subjects lang))
           template (or some_template (email-template lang))]
-      (log/error (str "Trying to get entry:"))
       (when-let [entry (find-or-add-securelink email callback_url metadata lang some_expiration)]
-        (log/error (str "Got entry: " entry))
         (send-ryhmasahkoposti (:valid_until entry), email, (:callback_url entry), (:token entry), template, subject)))
     (catch Exception e
       (log/error "failed to send verification link" e)

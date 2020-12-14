@@ -51,16 +51,13 @@
       :superuser (contains? organization-oids oph-organization))))
 
 (defn fetch-kayttaja-from-kayttoikeus-service [kayttooikeus-cas-client username]
-  (log/error (str "calling url: "(urls/kayttooikeus-service-kayttooikeus-kayttaja-url username) ", with user: " (get-in cfg [:cas :username])))
   (let [url (urls/kayttooikeus-service-kayttooikeus-kayttaja-url username)
         {:keys [status body]} (cas/cas-authenticated-get kayttooikeus-cas-client url)]
     (if (= 200 status)
-      (do
-        (log/error body)
-        (if-let [virkailija (first (json/parse-string body true))]
-          virkailija
-          (throw (new RuntimeException
-                      (str "No virkailija found by username " username)))))
+      (if-let [virkailija (first (json/parse-string body true))]
+        virkailija
+        (throw (new RuntimeException
+                    (str "No virkailija found by username " username))))
       (throw (new RuntimeException
                   (str "Could not get virkailija by username " username
                        ", status: " status
