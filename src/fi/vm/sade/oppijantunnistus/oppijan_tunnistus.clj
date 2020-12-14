@@ -85,16 +85,6 @@
                     rval))
              {:valid false :exists false})))
 
-(defn enrich-with-mandatory-headers-and-common-settings [opts]
-  (-> opts
-      (update :connection-timeout (fnil identity 60000))
-      (update :socket-timeout (fnil identity 60000))
-      (assoc  :throw-exceptions false)
-      (update :headers merge
-              {"Caller-Id" caller-id}
-              {"CSRF" csrf-value})
-      (update :cookies merge {"CSRF" {:value csrf-value :path "/"}})))
-
 (defn ^:private send-ryhmasahkoposti [expires email callback_url token raw_template subject]
         (let [verification_link (str callback_url token)
               template (render raw_template {:verification-link verification_link
@@ -108,18 +98,19 @@
                                                 :callingProcess "oppijantunnistus"}
                                     :recipient [{:email email}]})]
              (log/info "Sending email to " email " with verification-link: " verification_link " | token: " token " | callback_url: " callback_url)
-             (let [options {:timeout 3600000
+             (let [options {:socket-timeout (fnil identity 60000)
+                            :socket-timeout (fnil identity 60000)
+                            :throw-exceptions false
                             :headers {
                                       "Content-Type" "application/json"
                                       "Cookie" "CSRF=CSRF"
                                       "CSRF" "CSRF"
                                       "ClientSubSystemCode" client-id
                                       "Caller-Id" client-id}
-                            :body    mail_json}
-                   {:keys [status body]} (http-client/request
-                                                         (assoc
-                                                         (enrich-with-mandatory-headers-and-common-settings options)
-                                                           :url ryhmasahkoposti_url))]
+                            :body    mail_json
+                            :method :post
+                            :url     ryhmasahkoposti_url}
+                   {:keys [status body]} (http-client/request options)]
                         (if (and (= 200 status) body)
                           verification_link
                           (do (log/error "Sending email failed with status " status)
