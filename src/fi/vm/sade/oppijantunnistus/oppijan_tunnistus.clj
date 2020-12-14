@@ -85,6 +85,15 @@
                     rval))
              {:valid false :exists false})))
 
+(defn post [url options]
+  (http-client/request
+    (merge {:method :post
+            :socket-timeout (fnil identity 60000)
+            :socket-timeout (fnil identity 60000)
+            :throw-exceptions false
+            :url    url}
+           options)))
+
 (defn ^:private send-ryhmasahkoposti [expires email callback_url token raw_template subject]
         (let [verification_link (str callback_url token)
               template (render raw_template {:verification-link verification_link
@@ -98,20 +107,15 @@
                                                 :callingProcess "oppijantunnistus"}
                                     :recipient [{:email email}]})]
              (log/info "Sending email to " email " with verification-link: " verification_link " | token: " token " | callback_url: " callback_url)
-             (let [options {:socket-timeout (fnil identity 60000)
-                            :socket-timeout (fnil identity 60000)
-                            :throw-exceptions false
-                            :headers {
+             (let [options {:headers {
                                       "Content-Type" "application/json"
                                       "Cookie" "CSRF=CSRF"
                                       "CSRF" "CSRF"
                                       "ClientSubSystemCode" client-id
                                       "Caller-Id" client-id}
-                            :body    mail_json
-                            :method :post
-                            :url     ryhmasahkoposti_url}
-                   {:keys [status body]} (http-client/request options)]
-                        (if (and (= 200 status) body)
+                            :body    mail_json}
+                   {:keys [status body]} (post ryhmasahkoposti_url options)]
+                        (if (and (= 200 status) (contains? body "id"))
                           verification_link
                           (do (log/error "Sending email failed with status " status)
                               (throw (RuntimeException.
@@ -125,18 +129,17 @@
                                            :html          true
                                            :hakuOid       haku_oid}
                               :recipient  [(create-recipient "vastaanottaja@example.com" "exampleToken" callback_url)]})
-        options {:timeout 360000
-                   :headers {
+        options {:headers {
                              "Content-Type" "application/json"
                              "Cookie" "CSRF=CSRF"
                              "CSRF" "CSRF"
                              "ClientSubSystemCode" client-id
                              "Caller-Id" client-id}
-                   :body    mail_json}
-        {:keys [status headers body error]} @(http/post ryhmasahkoposti_url options)]
+                  :body    mail_json}
+        {:keys [status body]} (post ryhmasahkoposti_url options)]
               (if (and (= 200 status) (.contains body "Message-ID"))
                 body
-                (do (log/error "Preview email failed with status " status ":" (if error error headers))
+                (do (log/error "Preview email failed with status " status)
                     (throw (RuntimeException.
                              (str "Preview email failed with status " status)))))))
 
@@ -151,19 +154,18 @@
                                                :callingProcess "oppijantunnistus"
                                                :subject        (str template_name " " haku_oid " " lang) }
                                   :recipient  (for [x recipients_data] (create-recipient (nth x 0) (nth x 1) callback_url))})]
-           (let [options {:timeout 3600000
-                          :headers {
+           (let [options {:headers {
                                     "Cookie" "CSRF=CSRF"
                                     "CSRF" "CSRF"
                                     "Content-Type" "application/json"
                                     "ClientSubSystemCode" client-id
                                     "Caller-Id" client-id}
                           :body    mail_json}
-                 {:keys [status headers error body]} @(http/post ryhmasahkoposti_url options)]
+                 {:keys [status body]} (post ryhmasahkoposti_url options)]
                   (log/info recipients_data body)
-                  (if (and (= 200 status) (contains? (read-str body) "id"))
+                  (if (and (= 200 status) (contains? body "id"))
                     (for [x recipients_data] (create-response (nth x 0) (nth x 1) callback_url))
-                    (do (log/error "Sending email failed with status " status ":" (or error headers))
+                    (do (log/error "Sending email failed with status " status)
                         (throw (RuntimeException.
                                  (str "Sending email failed with status " status))))))))
 
