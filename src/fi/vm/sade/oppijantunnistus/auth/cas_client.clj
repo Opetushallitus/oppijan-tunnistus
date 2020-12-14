@@ -66,19 +66,20 @@
   (let [cas-client          (:client client)
         cas-params          (:params client)
         session-cookie-name (:session-cookie-name client)
-        cas-session-id      (:session-id client)]
+        cas-session-id      (:session-id client)
+        opts-with-redirect  (assoc opts :follow-redirects false)]
     (when (nil? @cas-session-id)
       (reset! cas-session-id (.run (.fetchCasSession cas-client cas-params session-cookie-name))))
     (let [resp (do-request (merge {:url url :method method}
-                                            opts
-                                            (create-params session-cookie-name cas-session-id body)))]
+                                  opts-with-redirect
+                                  (create-params session-cookie-name cas-session-id body)))]
       (if (or (= 401 (:status resp))
               (= 302 (:status resp)))
         (do
           (reset! cas-session-id (.run (.fetchCasSession cas-client cas-params session-cookie-name)))
           (do-request (merge {:url url :method method}
-                                       opts
-                                       (create-params session-cookie-name cas-session-id body))))
+                             opts-with-redirect
+                             (create-params session-cookie-name cas-session-id body))))
         resp))))
 
 (defn cas-authenticated-get [client url]
