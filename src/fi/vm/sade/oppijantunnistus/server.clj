@@ -102,7 +102,7 @@
                    :query-params [callback-url :- s/Str]
                    :summary    "Preview verification email"
                    (do (check-authorization! session)
-                       (log/info "Preview verification link email" (:params  req))
+                       (log/info "Preview verification link email: " callback-url ", " template-name ", " lang ", " haku-oid)
                        (let [email (ryhmasahkoposti-preview callback-url template-name lang haku-oid)]
                          {:status 200
                           :headers {"Content-Type" "message/rfc822; charset=UTF-8"
