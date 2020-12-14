@@ -119,7 +119,7 @@
                           verification_link
                           (do (log/error "Sending email failed with status " status)
                               (throw (RuntimeException.
-                                       (str "Sending email failed with status " status " (address=" (url "ryhmasahkoposti-service.email.firewall") "). Error: " error))))))))
+                                       (str "Sending email failed with status " status " (address=" (url "ryhmasahkoposti-service.email.firewall") "). Error"))))))))
 
 (defn ryhmasahkoposti-preview [callback_url template_name lang haku_oid]
   (let [ryhmasahkoposti_url (url "ryhmasahkoposti-service.email.preview.firewall")
