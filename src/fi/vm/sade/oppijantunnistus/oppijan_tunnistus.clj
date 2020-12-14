@@ -5,7 +5,7 @@
       [clostache.parser :refer [render]]
       [clojure.java.io :as io]
       [yesql.core :as sql]
-      [org.httpkit.client :as http]
+      [clj-http.client :as http-client]
       [clojure.data.json :refer [write-str read-str]]
       [clojure.tools.logging :as log]
       [fi.vm.sade.oppijantunnistus.expiration :refer [from-sql-time long-to-timestamp create-expiration-timestamp now-timestamp to-date-string to-psql-timestamp is-valid]]
@@ -85,6 +85,16 @@
                     rval))
              {:valid false :exists false})))
 
+(defn enrich-with-mandatory-headers-and-common-settings [opts]
+  (-> opts
+      (update :connection-timeout (fnil identity 60000))
+      (update :socket-timeout (fnil identity 60000))
+      (assoc  :throw-exceptions false)
+      (update :headers merge
+              {"Caller-Id" caller-id}
+              {"CSRF" csrf-value})
+      (update :cookies merge {"CSRF" {:value csrf-value :path "/"}})))
+
 (defn ^:private send-ryhmasahkoposti [expires email callback_url token raw_template subject]
         (let [verification_link (str callback_url token)
               template (render raw_template {:verification-link verification_link
@@ -106,10 +116,13 @@
                                       "ClientSubSystemCode" client-id
                                       "Caller-Id" client-id}
                             :body    mail_json}
-                   {:keys [status headers error body]} @(http/post ryhmasahkoposti_url options)]
-                        (if (and (= 200 status) (contains? (read-str body) "id"))
+                   {:keys [status body]} (http-client/request
+                                                         (assoc
+                                                         (enrich-with-mandatory-headers-and-common-settings options)
+                                                           :url ryhmasahkoposti_url))]
+                        (if (and (= 200 status) body)
                           verification_link
-                          (do (log/error "Sending email failed with status " status ":" (or error headers))
+                          (do (log/error "Sending email failed with status " status)
                               (throw (RuntimeException.
                                        (str "Sending email failed with status " status " (address=" (url "ryhmasahkoposti-service.email.firewall") "). Error: " error))))))))
 
