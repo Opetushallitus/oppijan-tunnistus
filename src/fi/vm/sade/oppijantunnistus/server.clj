@@ -71,7 +71,8 @@
 
 (defroutes oppijan-tunnistus-routes
             "Oppijan tunnistus API"
-            (GET "/token/:token" [token session]
+            (GET "/token/:token" {session :session}
+                 :path-params [token :- s/Str]
                  :responses {200 {:schema ValidityResponse
                                   :description "Returns token validity and email in case token exists"}}
                  :summary   "Verify token"
