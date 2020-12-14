@@ -87,11 +87,11 @@
 
 (defn post [url options]
   (http-client/request
-    (merge {:method :post
-            :socket-timeout (fnil identity 60000)
-            :socket-timeout (fnil identity 60000)
-            :throw-exceptions false
-            :url    url}
+    (merge {:method             :post
+            :connection-timeout 60000
+            :socket-timeout     60000
+            :throw-exceptions   false
+            :url                url}
            options)))
 
 (defn ^:private send-ryhmasahkoposti [expires email callback_url token raw_template subject]
