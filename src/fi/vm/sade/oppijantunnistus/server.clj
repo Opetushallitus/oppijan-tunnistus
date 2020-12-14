@@ -97,7 +97,7 @@
                   (do (check-authorization! session)
                       (log/info "Sending verification link to email" (s_req :email))
                       (ok (send-verification-link (s_req :email) (s_req :url) (s_req :metadata) (s_req :lang) (s_req :template) (s_req :subject) (s_req :expires)))))
-            (GET "/preview/haku/:haku-oid/template/:template-name/lang/:lang" [template-name haku-oid lang session :as req]
+            (GET "/preview/haku/:haku-oid/template/:template-name/lang/:lang" {session :session}
                    :path-params [template-name :- s/Str haku-oid :- s/Str lang :- s/Str]
                    :query-params [callback-url :- s/Str]
                    :summary    "Preview verification email"
