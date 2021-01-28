@@ -29,7 +29,7 @@
 (defn check-authorization! [session]
   (when-not (or (dev?)
                 (some #(= "oppijantunnistus-crud" %) (-> session :identity :rights)))
-    (log/error "Missing user rights: " session)             ;(-> session :identity :rights)
+    (log/error "Missing user rights: " session)
     (unauthorized!)))
 
 (s/defschema ValidityResponse {:exists s/Bool
@@ -125,8 +125,8 @@
   (context "/auth" []
     (middleware [session-client/wrap-session-client-headers]
                 (undocumented
-                  (GET "/checkpermission" {session :session}
-                    (ok (:superuser session)))
+                  (GET "/checkpermission" {}
+                    (ok))
                   (GET "/cas" [ticket :as request]
                     (let [redirect-url (or (get-in request [:session :original-url])
                                            (urls/cas-redirect-url))
