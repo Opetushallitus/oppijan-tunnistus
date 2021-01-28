@@ -58,9 +58,11 @@
   :prep-tasks ["compile"]
 
   :profiles {:uberjar {:prep-tasks ["compile" "resource"]}
+             :dev   {:env {:dev? "true"}}
              :test  {:prep-tasks ["compile" "resource"]
                      :jvm-opts ["-Doppijantunnistus.properties=target/spec.edn"
                                 "-Dlogback.access=does-not-exist.xml"]
+                     :env {:dev? "true"}
                      :dependencies [[speclj "3.3.2"]
                                     [com.cemerick/url "0.1.1"]
                                     [ring/ring-mock "0.3.0"]
@@ -77,7 +79,7 @@
   :aot [fi.vm.sade.oppijantunnistus.main]
 
   :target-path "target/%s"
-  :env     {:dev? "true"}
+
 
   :plugins [[speclj "3.3.2"]
             [lein-environ "1.1.0"]

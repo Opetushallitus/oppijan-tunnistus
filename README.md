@@ -12,7 +12,7 @@ If needed, set logback.access property:
 
 Start server:
 
-    ./lein run
+    ./lein with-profile dev run
 
  OPen browser:
  
