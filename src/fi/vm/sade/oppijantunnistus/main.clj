@@ -1,5 +1,5 @@
 (ns fi.vm.sade.oppijantunnistus.main
-  (:use [fi.vm.sade.oppijantunnistus.server :only [oppijan-tunnistus-api]]
+  (:use [fi.vm.sade.oppijantunnistus.server :only [new-api]]
         [ring.adapter.jetty :only [run-jetty]]
         [fi.vm.sade.oppijantunnistus.config :refer [cfg]])
   (:require [clojure.tools.logging :as log]
@@ -26,6 +26,7 @@
   (log/info "Running db migrations")
   (db/migrate "db.migration")
   (log/info "Starting server")
-  (run-jetty oppijan-tunnistus-api {:port (-> cfg :server :port)
-                                    :context "/api/v1"
-                                    :configurator configure-request-log}))
+  (run-jetty (new-api)
+             {:port         (-> cfg :server :port)
+              :context      "/api/v1"
+              :configurator configure-request-log}))

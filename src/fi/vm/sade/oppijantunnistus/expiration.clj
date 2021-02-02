@@ -19,4 +19,4 @@
 (defn from-sql-time [timestamp] (c/from-sql-time timestamp))
 (defn to-psql-timestamp [timestamp] (str (f/unparse formatter timestamp) " " timezone-id))
 
-(defn is-valid [sql-timestamp] (t/before? (l/local-now) (c/from-sql-time sql-timestamp)))
+(defn is-valid [timestamp] (t/before? (l/local-now) timestamp))

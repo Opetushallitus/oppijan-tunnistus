@@ -8,27 +8,26 @@
   :repositories [["oph-releases" "https://artifactory.opintopolku.fi/artifactory/oph-sade-release-local"]
                  ["oph-snapshots" "https://artifactory.opintopolku.fi/artifactory/oph-sade-snapshot-local"]
                  ["ext-snapshots" "https://artifactory.opintopolku.fi/artifactory/ext-snapshot-local"]]
-  :dependencies [[org.clojure/clojure "1.7.0"]
+  :dependencies [[org.clojure/clojure "1.10.1"]
                  [org.clojure/data.json "0.2.6"]
                  ;; HTTP server
                  [javax.servlet/servlet-api "2.5"]
                  [http-kit "2.2.0"]
-                 [clj-http "3.3.0"]
-                 [ring "1.5.0"]
-                 [ring/ring-jetty-adapter "1.5.0"]
-                 [ring/ring-servlet "1.5.0"]
-                 [ring/ring-json "0.4.0"]
-                 [ring/ring-core "1.5.0"]
+                 [clj-http "3.10.0"]
+                 [ring "1.8.2"]
+                 [ring/ring-jetty-adapter "1.8.2"]
+                 [ring/ring-servlet "1.8.2"]
+                 [ring/ring-json "0.5.0"]
+                 [ring/ring-core "1.8.2"]
 
                  ;; Routing
-                 [compojure "1.4.0"]
-                 [metosin/compojure-api "0.23.1"]
+                 [metosin/compojure-api "1.1.13"]
 
                  ;; SQL + migrations
-                 [yesql "0.5.0"]
-                 [org.postgresql/postgresql "9.4-1202-jdbc42"]
+                 [yesql "0.5.3"]
+                 [org.postgresql/postgresql "42.2.8"]
                  [org.flywaydb/flyway-core "3.2.1"]
-                 [hikari-cp "1.3.1" :exclusions [prismatic/schema]]
+                 [hikari-cp "2.9.0"]
 
                  ;; E-mail
                  [de.ubercode.clostache/clostache "1.4.0"]
@@ -47,16 +46,23 @@
                  ;; Utils
                  [org.clojure/tools.trace "0.7.9"]
                  [clj-time "0.12.0"]
-                 [pandect "0.6.1"]]
+                 [pandect "0.6.1"]
+
+
+                 [fi.vm.sade/scala-cas_2.12 "2.0.0-SNAPSHOT"]
+                 [ring/ring-session-timeout "0.2.0"]
+                 [oph/clj-ring-db-cas-session "0.3.0-SNAPSHOT"]]
 
   :javac-options ["-target" "1.8" "-source" "1.8" "-Xlint:-options"]
 
   :prep-tasks ["compile"]
 
   :profiles {:uberjar {:prep-tasks ["compile" "resource"]}
+             :dev   {:env {:dev? "true"}}
              :test  {:prep-tasks ["compile" "resource"]
                      :jvm-opts ["-Doppijantunnistus.properties=target/spec.edn"
                                 "-Dlogback.access=does-not-exist.xml"]
+                     :env {:dev? "true"}
                      :dependencies [[speclj "3.3.2"]
                                     [com.cemerick/url "0.1.1"]
                                     [ring/ring-mock "0.3.0"]
@@ -73,6 +79,7 @@
   :aot [fi.vm.sade.oppijantunnistus.main]
 
   :target-path "target/%s"
+
 
   :plugins [[speclj "3.3.2"]
             [lein-environ "1.1.0"]
@@ -100,6 +107,6 @@
   :test-paths ["spec"]
 
   :aliases {"dbmigrate" ["run" "-m" "fi.vm.sade.oppijantunnistus.db/migrate"]
-            "fakeserver" ["run" "-m" "fi.vm.sade.oppijantunnistus.fake_cas_server/start-cas-app"]}
+            "fakeserver" ["run" "-m" "fi.vm.sade.oppijantunnistus.fake_server/start-fake-app"]}
 
 )

@@ -1,6 +1,6 @@
 {:host-virkailija "https://itest-virkailija.oph.ware.fi"
  :db {:schema "public"
-      :servername "oppijantunnistusdb"
+      :servername "localhost"
       :databasename "oppijantunnistusdb"
       :username "postgres"
       :password "postgres"

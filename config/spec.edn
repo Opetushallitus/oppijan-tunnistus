@@ -1,6 +1,6 @@
 {:host-virkailija "http://localhost:{{fakeServerPort}}"
  :db {:schema "public"
-      :servername "oppijantunnistusdb"
+      :servername "localhost"
       :databasename "oppijantunnistusdb"
       :username "postgres"
       :password "postgres"

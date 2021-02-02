@@ -2,14 +2,7 @@
 
 ## Local Postgres setup
 
-MacOS users install docker with command `brew cask install dockertoolbox`.
-
-1. Create new docker-machine `docker-machine create —-driver virtualbox dockerVM` or
-    Start old one `docker-machine start dockerVM`
-2. `docker-machine env dockerVM`
-3. Check DOCKER_HOST variable
-4. Edit /etc/hosts. Add line `<docker-host-ip-goes-here> oppijantunnistusdb`
-5. init docker db `. init_docker_postgres.sh`
+    docker-compose up
 
 ## Run locally,
 
@@ -19,11 +12,11 @@ If needed, set logback.access property:
 
 Start server:
 
-    ./lein run
+    ./lein with-profile dev run
 
  OPen browser:
  
-    open http://localhost:9090/oppijan-tunnistus/swagger
+    open http://localhost:9090/oppijan-tunnistus/swagger/api-docs
     
 ## Creating executable JAR
 

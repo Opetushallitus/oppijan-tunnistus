@@ -1,14 +1,13 @@
 (ns fi.vm.sade.oppijantunnistus.oppijan_tunnistus_spec
-  (:require [speclj.core :refer :all]
+  (:require [speclj.core :refer [describe before-all after-all it should= should should-contain run-specs]]
             [fi.vm.sade.oppijantunnistus.fake_server :refer [start-fake-app stop-fake-app enable_server port]]
-            [fi.vm.sade.oppijantunnistus.server :refer [oppijan-tunnistus-api]]
+            [fi.vm.sade.oppijantunnistus.server :refer [new-api]]
             [ring.mock.request :refer [request content-type body]]
             [clojure.data.json :refer [write-str]]
             [cheshire.core :refer [parse-string]]
             [clj-http.client :as client]
             [ring.adapter.jetty :refer [run-jetty]]
-            [fi.vm.sade.oppijantunnistus.db.db-util :as db]
-            [clojure.java.io :as io]))
+            [fi.vm.sade.oppijantunnistus.db.db-util :as db]))
 
 
 (def oppijan_port (+ 10 port))
@@ -20,7 +19,7 @@
           (before-all
             (db/migrate "db.migration")
             (start-fake-app)
-            (run-jetty oppijan-tunnistus-api {:port oppijan_port :join? false}))
+            (run-jetty (new-api) {:port oppijan_port :join? false}))
 
           (after-all
             (stop-fake-app))
