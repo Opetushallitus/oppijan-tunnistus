@@ -210,6 +210,7 @@
           subject (or some_subject (email-subjects lang))
           template (or some_template (email-template lang))]
       (when-let [entry (find-or-add-securelink email callback_url metadata lang some_expiration)]
+        (log/info (str "Email: " email " | Template: " template))
         (send-ryhmasahkoposti (:valid_until entry), email, (:callback_url entry), (:token entry), template, subject)))
     (catch Exception e
       (log/error "failed to send verification link" e)
