@@ -13,7 +13,11 @@
 (defn cas-login [cas-client ticket]
   (fn []
     (when ticket
-      [(.run (.validateServiceTicket cas-client (urls/oppijantunnistus-login-url) ticket))
+      [(.run (.validateServiceTicket
+               cas-client
+               (urls/oppijantunnistus-login-url)
+               ticket
+               (.decodeVirkailijaUsername cas-client) ))
        ticket])))
 
 (defn- login-failed
