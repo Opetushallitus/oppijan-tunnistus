@@ -49,7 +49,7 @@
                  [pandect "0.6.1"]
 
 
-                 [fi.vm.sade/scala-cas_2.12 "2.0.0-SNAPSHOT"]
+                 [fi.vm.sade/scala-cas_2.12 "2.2.1-SNAPSHOT"]
                  [ring/ring-session-timeout "0.2.0"]
                  [oph/clj-ring-db-cas-session "0.3.0-SNAPSHOT"]]
 

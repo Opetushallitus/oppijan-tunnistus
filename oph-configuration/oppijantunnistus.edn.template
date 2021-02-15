@@ -6,7 +6,8 @@
       :password "{{oppijantunnistus_db_app_password}}"
       :port {{oppijantunnistus_db_port}}}
  :cas {:username "{{oppijantunnistus_cas_username}}"
-       :password "{{oppijantunnistus_cas_password}}"}
+       :password "{{oppijantunnistus_cas_password}}"
+       :url      "{{host_ilb}}/cas"}
  :expires-in { :days {{oppijantunnistus_expires_in_days}} }
  :server {:port {{palvelu_portti}}
           :base-url "/oppijan-tunnistus"}}
