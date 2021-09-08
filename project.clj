@@ -9,44 +9,44 @@
                  ["oph-snapshots" "https://artifactory.opintopolku.fi/artifactory/oph-sade-snapshot-local"]
                  ["ext-snapshots" "https://artifactory.opintopolku.fi/artifactory/ext-snapshot-local"]]
   :dependencies [[org.clojure/clojure "1.10.1"]
-                 [org.clojure/data.json "0.2.6"]
+                 [org.clojure/data.json "2.4.0"]
                  ;; HTTP server
                  [javax.servlet/servlet-api "2.5"]
-                 [http-kit "2.2.0"]
-                 [clj-http "3.10.0"]
-                 [ring "1.8.2"]
-                 [ring/ring-jetty-adapter "1.8.2"]
-                 [ring/ring-servlet "1.8.2"]
-                 [ring/ring-json "0.5.0"]
-                 [ring/ring-core "1.8.2"]
+                 [http-kit "2.5.3"]
+                 [clj-http "3.12.3"]
+                 [ring "1.9.4"]
+                 [ring/ring-jetty-adapter "1.9.4"]
+                 [ring/ring-servlet "1.9.4"]
+                 [ring/ring-json "0.5.1"]
+                 [ring/ring-core "1.9.4"]
 
                  ;; Routing
                  [metosin/compojure-api "1.1.13"]
 
                  ;; SQL + migrations
                  [yesql "0.5.3"]
-                 [org.postgresql/postgresql "42.2.8"]
-                 [org.flywaydb/flyway-core "3.2.1"]
-                 [hikari-cp "2.9.0"]
+                 [org.postgresql/postgresql "42.2.23"]
+                 [org.flywaydb/flyway-core "7.15.0"]
+                 [hikari-cp "2.13.0"]
 
                  ;; E-mail
                  [de.ubercode.clostache/clostache "1.4.0"]
 
                  ;; Configuration
-                 [environ "1.1.0"]
+                 [environ "1.2.0"]
                  [fi.vm.sade.java-utils/java-properties "0.1.0-SNAPSHOT"]
-                 [propertea "1.2.3"]
+                 [propertea "1.3.1"]
 
                  ;; Logging
-                 [org.slf4j/slf4j-api "1.7.21"]
-                 [ch.qos.logback/logback-classic "1.1.7"]
-                 [ch.qos.logback/logback-access "1.1.7"]
-                 [org.clojure/tools.logging "0.3.1"]
+                 [org.slf4j/slf4j-api "1.7.32"]
+                 [ch.qos.logback/logback-classic "1.2.5"]
+                 [ch.qos.logback/logback-access "1.2.5"]
+                 [org.clojure/tools.logging "1.1.0"]
 
                  ;; Utils
-                 [org.clojure/tools.trace "0.7.9"]
-                 [clj-time "0.12.0"]
-                 [pandect "0.6.1"]
+                 [org.clojure/tools.trace "0.7.11"]
+                 [clj-time "0.15.2"]
+                 [pandect "1.0.1"]
 
 
                  [fi.vm.sade/scala-cas_2.12 "2.2.1-SNAPSHOT"]
@@ -58,15 +58,16 @@
   :prep-tasks ["compile"]
 
   :profiles {:uberjar {:prep-tasks ["compile" "resource"]}
-             :dev   {:env {:dev? "true"}}
+             :dev   {:env {:dev? "true"}
+                     :jvm-opts ["-Dlogback.access=does-not-exist.xml"]}
              :test  {:prep-tasks ["compile" "resource"]
                      :jvm-opts ["-Doppijantunnistus.properties=target/spec.edn"
                                 "-Dlogback.access=does-not-exist.xml"]
                      :env {:dev? "true"}
                      :dependencies [[speclj "3.3.2"]
                                     [com.cemerick/url "0.1.1"]
-                                    [ring/ring-mock "0.3.0"]
-                                    [speclj-junit "0.0.11-SNAPSHOT"]]
+                                    [ring/ring-mock "0.4.0"]
+                                    [speclj-junit "0.0.11"]]
                      :resource {:resource-paths ["config"]
                                 :target-path "target"
                                 :includes [ #".*spec.edn" ]
@@ -85,7 +86,7 @@
             [lein-environ "1.1.0"]
             [lein-shell "0.4.0"]
             [lein-auto "0.1.2"]
-            [lein-ancient "0.6.7"]
+            [lein-ancient "0.7.0"]
             [lein-ring "0.8.11"]
             [lein-resource "14.10.2"]
             [lein-deploy-artifacts "0.1.0"]]

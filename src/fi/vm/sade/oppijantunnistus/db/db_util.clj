@@ -69,10 +69,11 @@
 
 (defn migrate [& migration-paths]
   (let [schema-name (-> cfg :db :schema)
-        flyway (doto (Flyway.)
-                 (.setSchemas (into-array String [schema-name]))
-                 (.setDataSource datasource)
-                 (.setLocations (into-array String migration-paths)))]
+        flyway (doto (Flyway. (-> (Flyway/configure)
+                                  (.baselineOnMigrate true)
+                                  (.schemas (into-array String [schema-name]))
+                                  (.dataSource datasource)
+                                  (.locations (into-array String migration-paths)))))]
     (try (.migrate flyway)
          (catch Throwable e
            (log/error e)
