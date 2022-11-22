@@ -70,10 +70,12 @@
       {:email       email
        :securelink  (str callback_url token)})
 
-(defn ^:private create-recipient [email token callback_url]
+(defn ^:private create-recipient [email token application-id callback_url]
       {:email                 email
        :recipientReplacements [{:name   "securelink"
-                                :value  (str callback_url token)}]})
+                                :value  (str callback_url token)}
+                               {:name "hakemusOid"
+                                :value application-id}]})
 
 (defn retrieve-email-and-validity-with-token [token]
       (let [entry (get-token token)]
@@ -153,7 +155,7 @@
                                                :letterId       letter_id
                                                :callingProcess "oppijantunnistus"
                                                :subject        (str template_name " " haku_oid " " lang) }
-                                  :recipient  (for [x recipients_data] (create-recipient (nth x 0) (nth x 1) callback_url))})]
+                                  :recipient  (for [x recipients_data] (create-recipient (nth x 0) (nth x 1) (nth x 2) callback_url))})]
            (let [options {:headers {
                                     "Cookie" "CSRF=CSRF"
                                     "CSRF" "CSRF"
@@ -235,7 +237,7 @@
         expires (or (some-> expires (long-to-timestamp)) (create-expiration-timestamp))
         token-metas (mapv token-meta application-oid-to-email-address)
         tokens (mapv (fn [meta]
-                       [(:application-oid meta) (:email meta) (:token meta)]) token-metas)]
+                       [(:email meta) (:token meta) (:application-oid meta)]) token-metas)]
     (try
       (add-tokens token-metas haku-oid expires callback-url lang)
       (send-ryhmasahkoposti-with-tokens tokens callback-url template-name lang haku-oid letter-id  )
