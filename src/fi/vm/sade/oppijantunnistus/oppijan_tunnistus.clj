@@ -235,7 +235,7 @@
         expires (or (some-> expires (long-to-timestamp)) (create-expiration-timestamp))
         token-metas (mapv token-meta application-oid-to-email-address)
         tokens (mapv (fn [meta]
-                       [(:email meta) (:token meta)]) token-metas)]
+                       [(:application-oid meta) (:email meta) (:token meta)]) token-metas)]
     (try
       (add-tokens token-metas haku-oid expires callback-url lang)
       (send-ryhmasahkoposti-with-tokens tokens callback-url template-name lang haku-oid letter-id  )
