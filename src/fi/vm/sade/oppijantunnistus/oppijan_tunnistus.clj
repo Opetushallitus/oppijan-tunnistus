@@ -71,11 +71,11 @@
        :securelink  (str callback_url (:token recipient))})
 
 (defn ^:private create-recipient [recipient callback_url]
-      {:email                 (:email recipient)
-       :recipientReplacements [{:name   "securelink"
-                                :value  (str callback_url (:token recipient))}
-                               {:name "hakemusOid"
-                                :value (:hakemusOid recipient)}]})
+  {:email                 (:email recipient)
+   :recipientReplacements [{:name  "securelink"
+                            :value (str callback_url (:token recipient))}
+                           {:name  "hakemusOid"
+                            :value (:application-oid recipient)}]})
 
 (defn retrieve-email-and-validity-with-token [token]
       (let [entry (get-token token)]
@@ -125,9 +125,9 @@
 
 (defn ryhmasahkoposti-preview [callback_url template_name lang haku_oid]
   (let [ryhmasahkoposti_url (url "ryhmasahkoposti-service.email.preview.firewall")
-        preview-recipient {:email      "vastaanottaja@example.com"
-                           :token      "exampleToken"
-                           :hakemusOid "exampleHakemusOid"}
+        preview-recipient {:email           "vastaanottaja@example.com"
+                           :token           "exampleToken"
+                           :application-oid "exampleHakemusOid"}
         mail_json (write-str {:email      {:from          "no-reply@opintopolku.fi"
                                            :templateName  template_name
                                            :languageCode  lang
@@ -168,7 +168,6 @@
                                     "Caller-Id" client-id}
                           :body    mail_json}
                  {:keys [status body]} (post ryhmasahkoposti_url options)]
-             (log/info "recipients_data 2")
              (log/info recipients_data body)
                   (if (and (= 200 status) (.contains body "id"))
                     (for [recipient recipients_data] (create-response recipient callback_url))
