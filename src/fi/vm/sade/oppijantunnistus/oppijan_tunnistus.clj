@@ -155,7 +155,13 @@
                                                :letterId       letter_id
                                                :callingProcess "oppijantunnistus"
                                                :subject        (str template_name " " haku_oid " " lang) }
-                                  :recipient  (for [x recipients_data] (create-recipient (nth x 0) (nth x 1) (nth x 2) callback_url))})]
+                                  :recipient  (for [recipient recipients_data]
+                                                ;(create-recipient (nth x 0) (nth x 1) (nth x 2) callback_url)
+                                                (do
+                                                  (log/info "recipients_data 1")
+                                                  (log/info recipients_data)
+                                                  (create-recipient (nth recipient 0) (nth recipient 1) (nth recipient 2) callback_url))
+                                                )})]
            (let [options {:headers {
                                     "Cookie" "CSRF=CSRF"
                                     "CSRF" "CSRF"
@@ -164,7 +170,8 @@
                                     "Caller-Id" client-id}
                           :body    mail_json}
                  {:keys [status body]} (post ryhmasahkoposti_url options)]
-                  (log/info recipients_data body)
+             (log/info "recipients_data 2")
+             (log/info recipients_data body)
                   (if (and (= 200 status) (.contains body "id"))
                     (for [x recipients_data] (create-response (nth x 0) (nth x 1) callback_url))
                     (do (log/error "Sending email failed with status " status)
