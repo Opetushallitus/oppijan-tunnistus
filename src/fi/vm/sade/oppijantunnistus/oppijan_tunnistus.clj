@@ -66,14 +66,16 @@
                                :sv "Studieinfo – inloggningslänk"
                                :fi "Opintopolku – kirjautumislinkki"})
 
-(defn ^:private create-response [email token callback_url]
-      {:email       email
-       :securelink  (str callback_url token)})
+(defn ^:private create-response [recipient callback_url]
+      {:email       (:email recipient)
+       :securelink  (str callback_url (:token recipient))})
 
-(defn ^:private create-recipient [email token callback_url]
-      {:email                 email
-       :recipientReplacements [{:name   "securelink"
-                                :value  (str callback_url token)}]})
+(defn ^:private create-recipient [recipient callback_url]
+  {:email                 (:email recipient)
+   :recipientReplacements [{:name  "securelink"
+                            :value (str callback_url (:token recipient))}
+                           {:name  "hakemusOid"
+                            :value (:application-oid recipient)}]})
 
 (defn retrieve-email-and-validity-with-token [token]
       (let [entry (get-token token)]
@@ -123,12 +125,15 @@
 
 (defn ryhmasahkoposti-preview [callback_url template_name lang haku_oid]
   (let [ryhmasahkoposti_url (url "ryhmasahkoposti-service.email.preview.firewall")
+        preview-recipient {:email           "vastaanottaja@example.com"
+                           :token           "exampleToken"
+                           :application-oid "exampleHakemusOid"}
         mail_json (write-str {:email      {:from          "no-reply@opintopolku.fi"
                                            :templateName  template_name
                                            :languageCode  lang
                                            :html          true
                                            :hakuOid       haku_oid}
-                              :recipient  [(create-recipient "vastaanottaja@example.com" "exampleToken" callback_url)]})
+                              :recipient  [(create-recipient preview-recipient callback_url)]})
         options {:headers {
                              "Content-Type" "application/json"
                              "Cookie" "CSRF=CSRF"
@@ -153,7 +158,8 @@
                                                :letterId       letter_id
                                                :callingProcess "oppijantunnistus"
                                                :subject        (str template_name " " haku_oid " " lang) }
-                                  :recipient  (for [x recipients_data] (create-recipient (nth x 0) (nth x 1) callback_url))})]
+                                  :recipient  (for [recipient recipients_data]
+                                                (create-recipient recipient callback_url))})]
            (let [options {:headers {
                                     "Cookie" "CSRF=CSRF"
                                     "CSRF" "CSRF"
@@ -162,9 +168,9 @@
                                     "Caller-Id" client-id}
                           :body    mail_json}
                  {:keys [status body]} (post ryhmasahkoposti_url options)]
-                  (log/info recipients_data body)
+             (log/info recipients_data body)
                   (if (and (= 200 status) (.contains body "id"))
-                    (for [x recipients_data] (create-response (nth x 0) (nth x 1) callback_url))
+                    (for [recipient recipients_data] (create-response recipient callback_url))
                     (do (log/error "Sending email failed with status " status)
                         (throw (RuntimeException.
                                  (str "Sending email failed with status " status))))))))
@@ -178,10 +184,12 @@
 (defn create-verification-link [email callback_url metadata some_lang some_expiration]
   (let [lang (sanitize_lang some_lang)
         token (generate-token)
-        expires (or (some-> some_expiration (long-to-timestamp))(create-expiration-timestamp))]
+        expires (or (some-> some_expiration (long-to-timestamp)) (create-expiration-timestamp))
+        recipient {:token token
+                   :email email}]
     (try
       (add-token (to-psql-timestamp expires) email token callback_url metadata lang)
-      (create-response email token callback_url)
+      (create-response recipient callback_url)
       (catch Exception e
         (log/error "failed to create verification token" e)
         (throw (RuntimeException. "failed to create verification token" e))))))
@@ -233,12 +241,10 @@
                         template-name
                         "default_template_name")
         expires (or (some-> expires (long-to-timestamp)) (create-expiration-timestamp))
-        token-metas (mapv token-meta application-oid-to-email-address)
-        tokens (mapv (fn [meta]
-                       [(:email meta) (:token meta)]) token-metas)]
+        recipients-data (mapv token-meta application-oid-to-email-address)]
     (try
-      (add-tokens token-metas haku-oid expires callback-url lang)
-      (send-ryhmasahkoposti-with-tokens tokens callback-url template-name lang haku-oid letter-id  )
+      (add-tokens recipients-data haku-oid expires callback-url lang)
+      (send-ryhmasahkoposti-with-tokens recipients-data callback-url template-name lang haku-oid letter-id  )
       (catch Exception e
         (log/error "failed to send verification links" e)
         (throw (RuntimeException. "failed to send verification links" e))))))
