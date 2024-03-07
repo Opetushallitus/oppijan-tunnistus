@@ -128,9 +128,16 @@
                   (GET "/checkpermission" {}
                     (ok))
                   (GET "/cas" [ticket :as request]
-                    (let [redirect-url (or (get-in request [:session :original-url])
-                                           (urls/cas-redirect-url))
-                          login-provider (auth/cas-login @login-cas-client ticket)]
+                    (let [redirect-url
+                          (or (get-in request [:session :original-url])
+                              (urls/cas-redirect-url))
+                          login-provider
+                          (auth/cas-login
+                            @login-cas-client
+                            ticket
+                            (dissoc request
+                                    :compojure.api.middleware/options
+                                    :ring.swagger.middleware/data))]
                       (auth/login login-provider
                                   redirect-url
                                   @kayttooikeus-cas-client)))
