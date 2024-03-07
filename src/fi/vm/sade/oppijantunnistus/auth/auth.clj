@@ -10,17 +10,18 @@
             [clojure.tools.logging :as log])
   (:import (fi.vm.sade.utils.cas CasLogout)))
 
-(defn cas-login [cas-client ticket]
+(defn cas-login [cas-client ticket request]
   (fn []
-    (when ticket
-      [(.run (.validateServiceTicketWithVirkailijaUsername cas-client (urls/oppijantunnistus-login-url) ticket))
+    (if-not ticket
+      (throw (ex-info (str "No service ticket found in request " request)
+                      {:request request}))
+      [(.run (.validateServiceTicketWithVirkailijaUsername
+               cas-client (urls/oppijantunnistus-login-url) ticket))
        ticket])))
 
 (defn- login-failed
   ([e]
    (log/error e "Error in login ticket handling")
-   (resp/redirect (urls/redirect-to-login-failed-page-url)))
-  ([]
    (resp/redirect (urls/redirect-to-login-failed-page-url))))
 
 (def oph-organization "1.2.246.562.10.00000000001")
@@ -74,7 +75,7 @@
                         :ticket               ticket
                         :success-redirect-url redirect-url})]
         (login-succeeded response virkailija))
-      (login-failed))
+      (login-failed (ex-info "login-provider did not provide credentials" {})))
     (catch Throwable e
       (login-failed e))))
 
