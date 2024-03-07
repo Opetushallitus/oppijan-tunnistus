@@ -17,12 +17,12 @@ If needed, set logback.access property:
 
 Start server:
 
-    $ ./lein with-profile dev run
+    $ lein with-profile dev run
 
 You can also use a REPL and start from there (e.g. for precise reloads
 or NREPL editor integrations):
 
-    $ ./lein with-profiles +dev repl
+    $ lein with-profiles +dev repl
     $ fi.vm.sade.oppijantunnistus.main=> (-main)
 
 Open browser:
@@ -31,10 +31,10 @@ Open browser:
     
 ## Creating executable JAR
 
-    $ ./lein uberjar
+    $ lein uberjar
 
 ## Run tests
 
 Set up local postgres first (see above).
 
-    $ ./lein with-profile test spec
+    $ lein with-profile test spec
