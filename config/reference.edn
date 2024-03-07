@@ -1,4 +1,7 @@
-{:host-virkailija "https://itest-virkailija.oph.ware.fi"
+{:host-virkailija "https://virkailija.testiopintopolku.fi/"
+ :cas {:url "https://virkailija.testiopintopolku.fi/cas"
+       :username ""
+       :password ""}
  :db {:schema "public"
       :servername "localhost"
       :databasename "oppijantunnistusdb"
