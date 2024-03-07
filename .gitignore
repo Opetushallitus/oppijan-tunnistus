@@ -1,5 +1,3 @@
-pom.xml
-pom.xml.asc
 *jar
 /lib/
 /classes/
@@ -13,3 +11,4 @@ pom.xml.asc
 .nrepl-port
 .idea
 *.iml
+.DS_Store
