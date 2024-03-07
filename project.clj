@@ -10,6 +10,7 @@
                  ["ext-snapshots" "https://artifactory.opintopolku.fi/artifactory/ext-snapshot-local"]]
   :dependencies [[org.clojure/clojure "1.10.1"]
                  [org.clojure/data.json "0.2.6"]
+
                  ;; HTTP server
                  [javax.servlet/servlet-api "2.5"]
                  [http-kit "2.2.0"]
@@ -48,7 +49,6 @@
                  [clj-time "0.12.0"]
                  [pandect "0.6.1"]
 
-
                  [fi.vm.sade/scala-cas_2.12 "2.2.2.1-SNAPSHOT"]
                  [ring/ring-session-timeout "0.2.0"]
                  [oph/clj-ring-db-cas-session "0.3.0-SNAPSHOT"]]
@@ -58,11 +58,12 @@
   :prep-tasks ["compile"]
 
   :profiles {:uberjar {:prep-tasks ["compile" "resource"]}
-             :dev   {:env {:dev? "true"}}
-             :test  {:prep-tasks ["compile" "resource"]
+             :dev   {:env {:dev? "true"}
+                     :jvm-opts ["-Dlogback.access=does-not-exist.xml"]}
+             :test  {:env {:dev? "true"}
+                     :prep-tasks ["compile" "resource"]
                      :jvm-opts ["-Doppijantunnistus.properties=target/spec.edn"
                                 "-Dlogback.access=does-not-exist.xml"]
-                     :env {:dev? "true"}
                      :dependencies [[speclj "3.3.2"]
                                     [com.cemerick/url "0.1.1"]
                                     [ring/ring-mock "0.3.0"]
@@ -79,7 +80,6 @@
   :aot [fi.vm.sade.oppijantunnistus.main]
 
   :target-path "target/%s"
-
 
   :plugins [[speclj "3.3.2"]
             [lein-environ "1.1.0"]
@@ -107,6 +107,4 @@
   :test-paths ["spec"]
 
   :aliases {"dbmigrate" ["run" "-m" "fi.vm.sade.oppijantunnistus.db/migrate"]
-            "fakeserver" ["run" "-m" "fi.vm.sade.oppijantunnistus.fake_server/start-fake-app"]}
-
-)
+            "fakeserver" ["run" "-m" "fi.vm.sade.oppijantunnistus.fake_server/start-fake-app"]})
