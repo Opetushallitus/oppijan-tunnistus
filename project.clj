@@ -8,6 +8,8 @@
   :repositories [["oph-releases" "https://artifactory.opintopolku.fi/artifactory/oph-sade-release-local"]
                  ["oph-snapshots" "https://artifactory.opintopolku.fi/artifactory/oph-sade-snapshot-local"]
                  ["ext-snapshots" "https://artifactory.opintopolku.fi/artifactory/ext-snapshot-local"]]
+  :managed-dependencies [[com.typesafe.akka/akka-actor_2.12 "2.5.16"]
+                         [com.fasterxml.jackson.core/jackson-databind "2.9.10.4"]]
   :dependencies [[org.clojure/clojure "1.10.1"]
                  [org.clojure/data.json "0.2.6"]
 
@@ -26,7 +28,7 @@
 
                  ;; SQL + migrations
                  [yesql "0.5.3"]
-                 [org.postgresql/postgresql "42.2.8"]
+                 [org.postgresql/postgresql "42.7.4"]
                  [org.flywaydb/flyway-core "3.2.1"]
                  [hikari-cp "2.9.0"]
 
@@ -40,8 +42,8 @@
 
                  ;; Logging
                  [org.slf4j/slf4j-api "1.7.21"]
-                 [ch.qos.logback/logback-classic "1.1.7"]
-                 [ch.qos.logback/logback-access "1.1.7"]
+                 [ch.qos.logback/logback-classic "1.2.13"]
+                 [ch.qos.logback/logback-access "1.2.13"]
                  [org.clojure/tools.logging "0.3.1"]
 
                  ;; Utils
