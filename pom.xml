@@ -18,7 +18,7 @@
     <url>https://github.com/Opetushallitus/oppijan-tunnistus</url>
     <connection>scm:git:git://github.com/Opetushallitus/oppijan-tunnistus.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/Opetushallitus/oppijan-tunnistus.git</developerConnection>
-    <tag>e48bf116b0895918e99a3515131e28f39ad9e6b5</tag>
+    <tag>7c598224e20aa2a5454f639be8075739d119e26a</tag>
   </scm>
   <build>
     <sourceDirectory>src</sourceDirectory>
@@ -39,8 +39,8 @@
         <directory>target/generated-resources</directory>
       </testResource>
     </testResources>
-    <directory>target/default</directory>
-    <outputDirectory>target/default/classes</outputDirectory>
+    <directory>target</directory>
+    <outputDirectory>target/classes</outputDirectory>
     <plugins/>
   </build>
   <repositories>
@@ -96,7 +96,18 @@
     </repository>
   </repositories>
   <dependencyManagement>
-    <dependencies/>
+    <dependencies>
+      <dependency>
+        <groupId>com.typesafe.akka</groupId>
+        <artifactId>akka-actor_2.12</artifactId>
+        <version>2.5.16</version>
+      </dependency>
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-databind</artifactId>
+        <version>2.9.10.4</version>
+      </dependency>
+    </dependencies>
   </dependencyManagement>
   <dependencies>
     <dependency>
@@ -162,7 +173,7 @@
     <dependency>
       <groupId>org.postgresql</groupId>
       <artifactId>postgresql</artifactId>
-      <version>42.2.8</version>
+      <version>42.7.4</version>
     </dependency>
     <dependency>
       <groupId>org.flywaydb</groupId>
@@ -202,12 +213,12 @@
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
-      <version>1.1.7</version>
+      <version>1.2.13</version>
     </dependency>
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-access</artifactId>
-      <version>1.1.7</version>
+      <version>1.2.13</version>
     </dependency>
     <dependency>
       <groupId>org.clojure</groupId>
