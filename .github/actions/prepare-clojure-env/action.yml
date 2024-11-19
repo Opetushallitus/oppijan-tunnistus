@@ -4,7 +4,7 @@ runs:
   using: "composite"
   steps:
     - name: Cache local Maven repository
-      uses: actions/cache@v2
+      uses: actions/cache@v4
       with:
         path: ~/.m2/repository
         key: ${{ runner.os }}-maven-${{ hashFiles('**/project.clj') }}
@@ -21,6 +21,6 @@ runs:
         timezoneLinux: "Europe/Helsinki"
 
     - name: Install clojure tools
-      uses: DeLaGuardo/setup-clojure@4.0
+      uses: DeLaGuardo/setup-clojure@13.0
       with:
         lein: 2.9.1

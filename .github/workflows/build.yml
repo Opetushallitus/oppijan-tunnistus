@@ -10,11 +10,7 @@ jobs:
   test-and-build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-
-      - uses: dcodeIO/setup-node-nvm@master
-        with:
-          node-version: lts/*
+      - uses: actions/checkout@v4
 
       - name: Prepare clojure env
         uses: ./.github/actions/prepare-clojure-env
@@ -32,7 +28,7 @@ jobs:
           lein uberjar
 
 
-      - uses: actions/cache@v2
+      - uses: actions/cache@v4
         id: restore-build
         with:
           path: target
@@ -42,9 +38,9 @@ jobs:
     needs: [ test-and-build ]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
-      - uses: actions/cache@v2
+      - uses: actions/cache@v4
         id: restore-build
         with:
           path: target
