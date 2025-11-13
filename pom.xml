@@ -18,7 +18,7 @@
     <url>https://github.com/Opetushallitus/oppijan-tunnistus</url>
     <connection>scm:git:git://github.com/Opetushallitus/oppijan-tunnistus.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/Opetushallitus/oppijan-tunnistus.git</developerConnection>
-    <tag>0aebf87d8d2fb44ce0d5764cd04a7c418af5d147</tag>
+    <tag>430d27438718c44a4173a5c5b964a5fe777cb69e</tag>
   </scm>
   <build>
     <sourceDirectory>src</sourceDirectory>
@@ -113,9 +113,39 @@
         <version>2.5.16</version>
       </dependency>
       <dependency>
+        <groupId>clj-commons</groupId>
+        <artifactId>clj-yaml</artifactId>
+        <version>1.0.29</version>
+      </dependency>
+      <dependency>
+        <groupId>commons-fileupload</groupId>
+        <artifactId>commons-fileupload</artifactId>
+        <version>1.6.0</version>
+      </dependency>
+      <dependency>
+        <groupId>commons-io</groupId>
+        <artifactId>commons-io</artifactId>
+        <version>2.14.0</version>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-server</artifactId>
+        <version>9.4.57.v20241219</version>
+      </dependency>
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-core</artifactId>
+        <version>2.15.0</version>
+      </dependency>
+      <dependency>
+        <groupId>com.fasterxml.jackson.dataformat</groupId>
+        <artifactId>jackson-dataformat-cbor</artifactId>
+        <version>2.15.0</version>
+      </dependency>
+      <dependency>
         <groupId>com.fasterxml.jackson.core</groupId>
         <artifactId>jackson-databind</artifactId>
-        <version>2.9.10.4</version>
+        <version>2.15.0</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -123,7 +153,7 @@
     <dependency>
       <groupId>org.clojure</groupId>
       <artifactId>clojure</artifactId>
-      <version>1.10.1</version>
+      <version>1.11.2</version>
     </dependency>
     <dependency>
       <groupId>org.clojure</groupId>
@@ -183,7 +213,7 @@
     <dependency>
       <groupId>org.postgresql</groupId>
       <artifactId>postgresql</artifactId>
-      <version>42.7.4</version>
+      <version>42.7.7</version>
     </dependency>
     <dependency>
       <groupId>org.flywaydb</groupId>
