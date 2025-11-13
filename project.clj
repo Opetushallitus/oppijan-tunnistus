@@ -5,7 +5,10 @@
             :url "http://opensource.org/licenses/EUPL-1.1"}
   :deploy-repositories {"snapshots" {:url "https://artifactory.opintopolku.fi/artifactory/oph-sade-snapshot-local"}
                         "releases" {:url "https://artifactory.opintopolku.fi/artifactory/oph-sade-release-local"}}
-  :repositories [["oph-releases" "https://artifactory.opintopolku.fi/artifactory/oph-sade-release-local"]
+  :repositories [["github" {:url "https://maven.pkg.github.com/Opetushallitus/packages"
+                            :username "private-token"
+                            :password :env/GITHUB_TOKEN}]
+                 ["oph-releases" "https://artifactory.opintopolku.fi/artifactory/oph-sade-release-local"]
                  ["oph-snapshots" "https://artifactory.opintopolku.fi/artifactory/oph-sade-snapshot-local"]
                  ["ext-snapshots" "https://artifactory.opintopolku.fi/artifactory/ext-snapshot-local"]]
   :managed-dependencies [[com.typesafe.akka/akka-actor_2.12 "2.5.16"]
@@ -51,9 +54,9 @@
                  [clj-time "0.12.0"]
                  [pandect "0.6.1"]
 
-                 [fi.vm.sade/scala-cas_2.12 "2.2.2.1-SNAPSHOT"]
+                 [opiskelijavalinnat-utils/java-cas "2.0.0-SNAPSHOT" :exclusions [org.slf4j/slf4j-simple]]
                  [ring/ring-session-timeout "0.2.0"]
-                 [oph/clj-ring-db-cas-session "0.3.0-SNAPSHOT"]]
+                 [opiskelijavalinnat-utils/clj-ring-db-cas-session "1.0.0-SNAPSHOT"]]
 
   :javac-options ["-target" "1.8" "-source" "1.8" "-Xlint:-options"]
 

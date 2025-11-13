@@ -18,7 +18,7 @@
     <url>https://github.com/Opetushallitus/oppijan-tunnistus</url>
     <connection>scm:git:git://github.com/Opetushallitus/oppijan-tunnistus.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/Opetushallitus/oppijan-tunnistus.git</developerConnection>
-    <tag>7c598224e20aa2a5454f639be8075739d119e26a</tag>
+    <tag>0aebf87d8d2fb44ce0d5764cd04a7c418af5d147</tag>
   </scm>
   <build>
     <sourceDirectory>src</sourceDirectory>
@@ -57,6 +57,16 @@
     <repository>
       <id>clojars</id>
       <url>https://repo.clojars.org/</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+    </repository>
+    <repository>
+      <id>github</id>
+      <url>https://maven.pkg.github.com/Opetushallitus/packages</url>
       <snapshots>
         <enabled>true</enabled>
       </snapshots>
@@ -241,9 +251,15 @@
       <version>0.6.1</version>
     </dependency>
     <dependency>
-      <groupId>fi.vm.sade</groupId>
-      <artifactId>scala-cas_2.12</artifactId>
-      <version>2.2.2.1-SNAPSHOT</version>
+      <groupId>opiskelijavalinnat-utils</groupId>
+      <artifactId>java-cas</artifactId>
+      <version>2.0.0-SNAPSHOT</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>slf4j-simple</artifactId>
+          <groupId>org.slf4j</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>ring</groupId>
@@ -251,9 +267,9 @@
       <version>0.2.0</version>
     </dependency>
     <dependency>
-      <groupId>oph</groupId>
+      <groupId>opiskelijavalinnat-utils</groupId>
       <artifactId>clj-ring-db-cas-session</artifactId>
-      <version>0.3.0-SNAPSHOT</version>
+      <version>1.0.0-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>speclj</groupId>
