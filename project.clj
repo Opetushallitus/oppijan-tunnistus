@@ -5,12 +5,21 @@
             :url "http://opensource.org/licenses/EUPL-1.1"}
   :deploy-repositories {"snapshots" {:url "https://artifactory.opintopolku.fi/artifactory/oph-sade-snapshot-local"}
                         "releases" {:url "https://artifactory.opintopolku.fi/artifactory/oph-sade-release-local"}}
-  :repositories [["oph-releases" "https://artifactory.opintopolku.fi/artifactory/oph-sade-release-local"]
+  :repositories [["github" {:url "https://maven.pkg.github.com/Opetushallitus/packages"
+                            :username "private-token"
+                            :password :env/GITHUB_TOKEN}]
+                 ["oph-releases" "https://artifactory.opintopolku.fi/artifactory/oph-sade-release-local"]
                  ["oph-snapshots" "https://artifactory.opintopolku.fi/artifactory/oph-sade-snapshot-local"]
                  ["ext-snapshots" "https://artifactory.opintopolku.fi/artifactory/ext-snapshot-local"]]
   :managed-dependencies [[com.typesafe.akka/akka-actor_2.12 "2.5.16"]
-                         [com.fasterxml.jackson.core/jackson-databind "2.9.10.4"]]
-  :dependencies [[org.clojure/clojure "1.10.1"]
+                         [clj-commons/clj-yaml "1.0.29"]
+                         [commons-fileupload "1.6.0"]
+                         [commons-io "2.14.0"]
+                         [org.eclipse.jetty/jetty-server "9.4.57.v20241219"]
+                         [com.fasterxml.jackson.core/jackson-core "2.15.0"]
+                         [com.fasterxml.jackson.dataformat/jackson-dataformat-cbor "2.15.0"]
+                         [com.fasterxml.jackson.core/jackson-databind "2.15.0"]]
+  :dependencies [[org.clojure/clojure "1.11.2"]
                  [org.clojure/data.json "0.2.6"]
 
                  ;; HTTP server
@@ -28,7 +37,7 @@
 
                  ;; SQL + migrations
                  [yesql "0.5.3"]
-                 [org.postgresql/postgresql "42.7.4"]
+                 [org.postgresql/postgresql "42.7.7"]
                  [org.flywaydb/flyway-core "3.2.1"]
                  [hikari-cp "2.9.0"]
 
@@ -51,9 +60,9 @@
                  [clj-time "0.12.0"]
                  [pandect "0.6.1"]
 
-                 [fi.vm.sade/scala-cas_2.12 "2.2.2.1-SNAPSHOT"]
+                 [opiskelijavalinnat-utils/java-cas "2.0.0-SNAPSHOT" :exclusions [org.slf4j/slf4j-simple]]
                  [ring/ring-session-timeout "0.2.0"]
-                 [oph/clj-ring-db-cas-session "0.3.0-SNAPSHOT"]]
+                 [opiskelijavalinnat-utils/clj-ring-db-cas-session "1.0.0-SNAPSHOT"]]
 
   :javac-options ["-target" "1.8" "-source" "1.8" "-Xlint:-options"]
 

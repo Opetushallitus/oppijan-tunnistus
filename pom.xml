@@ -18,7 +18,7 @@
     <url>https://github.com/Opetushallitus/oppijan-tunnistus</url>
     <connection>scm:git:git://github.com/Opetushallitus/oppijan-tunnistus.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/Opetushallitus/oppijan-tunnistus.git</developerConnection>
-    <tag>7c598224e20aa2a5454f639be8075739d119e26a</tag>
+    <tag>430d27438718c44a4173a5c5b964a5fe777cb69e</tag>
   </scm>
   <build>
     <sourceDirectory>src</sourceDirectory>
@@ -65,6 +65,16 @@
       </releases>
     </repository>
     <repository>
+      <id>github</id>
+      <url>https://maven.pkg.github.com/Opetushallitus/packages</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+    </repository>
+    <repository>
       <id>oph-releases</id>
       <url>https://artifactory.opintopolku.fi/artifactory/oph-sade-release-local</url>
       <snapshots>
@@ -103,9 +113,39 @@
         <version>2.5.16</version>
       </dependency>
       <dependency>
+        <groupId>clj-commons</groupId>
+        <artifactId>clj-yaml</artifactId>
+        <version>1.0.29</version>
+      </dependency>
+      <dependency>
+        <groupId>commons-fileupload</groupId>
+        <artifactId>commons-fileupload</artifactId>
+        <version>1.6.0</version>
+      </dependency>
+      <dependency>
+        <groupId>commons-io</groupId>
+        <artifactId>commons-io</artifactId>
+        <version>2.14.0</version>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-server</artifactId>
+        <version>9.4.57.v20241219</version>
+      </dependency>
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-core</artifactId>
+        <version>2.15.0</version>
+      </dependency>
+      <dependency>
+        <groupId>com.fasterxml.jackson.dataformat</groupId>
+        <artifactId>jackson-dataformat-cbor</artifactId>
+        <version>2.15.0</version>
+      </dependency>
+      <dependency>
         <groupId>com.fasterxml.jackson.core</groupId>
         <artifactId>jackson-databind</artifactId>
-        <version>2.9.10.4</version>
+        <version>2.15.0</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -113,7 +153,7 @@
     <dependency>
       <groupId>org.clojure</groupId>
       <artifactId>clojure</artifactId>
-      <version>1.10.1</version>
+      <version>1.11.2</version>
     </dependency>
     <dependency>
       <groupId>org.clojure</groupId>
@@ -173,7 +213,7 @@
     <dependency>
       <groupId>org.postgresql</groupId>
       <artifactId>postgresql</artifactId>
-      <version>42.7.4</version>
+      <version>42.7.7</version>
     </dependency>
     <dependency>
       <groupId>org.flywaydb</groupId>
@@ -241,9 +281,15 @@
       <version>0.6.1</version>
     </dependency>
     <dependency>
-      <groupId>fi.vm.sade</groupId>
-      <artifactId>scala-cas_2.12</artifactId>
-      <version>2.2.2.1-SNAPSHOT</version>
+      <groupId>opiskelijavalinnat-utils</groupId>
+      <artifactId>java-cas</artifactId>
+      <version>2.0.0-SNAPSHOT</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>slf4j-simple</artifactId>
+          <groupId>org.slf4j</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>ring</groupId>
@@ -251,9 +297,9 @@
       <version>0.2.0</version>
     </dependency>
     <dependency>
-      <groupId>oph</groupId>
+      <groupId>opiskelijavalinnat-utils</groupId>
       <artifactId>clj-ring-db-cas-session</artifactId>
-      <version>0.3.0-SNAPSHOT</version>
+      <version>1.0.0-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>speclj</groupId>

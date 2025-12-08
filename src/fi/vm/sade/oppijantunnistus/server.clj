@@ -120,7 +120,6 @@
             (route/not-found "Page not found"))
 
 (defn auth-routes [login-cas-client
-                   kayttooikeus-cas-client
                    session-store]
   (context "/auth" []
     (middleware [session-client/wrap-session-client-headers]
@@ -139,8 +138,7 @@
                                     :compojure.api.middleware/options
                                     :ring.swagger.middleware/data))]
                       (auth/login login-provider
-                                  redirect-url
-                                  @kayttooikeus-cas-client)))
+                                  redirect-url)))
                   (POST "/cas" [logoutRequest]
                     (auth/cas-initiated-logout logoutRequest session-store))
                   (GET "/logout" {session :session}
@@ -148,9 +146,7 @@
 
 (defn new-api []
   (let [login-cas-client (delay (cas/new-cas-client))
-        session-store (create-session-store db/datasource)
-        kayttooikeus-cas-client (delay (cas/new-client "/kayttooikeus-service" "j_spring_cas_security_check"
-                                                       "JSESSIONID"))]
+        session-store (create-session-store db/datasource)]
     (api {:swagger      {:spec    "/oppijan-tunnistus/swagger/swagger.json"
                          :ui      "/oppijan-tunnistus/swagger/api-docs"
                          :data    {:info {:version     "0.1.0"
@@ -169,4 +165,4 @@
              (middleware [session-client/wrap-session-client-headers
                           (session-timeout/wrap-idle-session-timeout)]
                          (context "/api/v1" [] oppijan-tunnistus-routes))
-             (auth-routes login-cas-client kayttooikeus-cas-client session-store))))))
+             (auth-routes login-cas-client session-store))))))
